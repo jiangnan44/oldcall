@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/ic_iv_avatar"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@mipmap/pic_default_avatar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/ic_tv_avatar"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@color/teal_7"
+        android:gravity="center"
+        android:text="大"
+        android:visibility="gone"
+        android:textColor="@color/white"
+        android:textSize="@dimen/txt_30"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/ic_tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_10"
+        android:layout_marginTop="5dp"
+        android:text="王二大"
+        android:textColor="@color/orange_7"
+        android:textSize="@dimen/txt_16"
+        app:layout_constraintLeft_toRightOf="@id/ic_iv_avatar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/ic_tv_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_10"
+        android:layout_marginBottom="@dimen/space_10"
+        android:text="15856585477"
+        android:textColor="@color/gray_10"
+        android:textSize="@dimen/txt_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/ic_iv_avatar" />
+
+    <CheckBox
+        android:id="@+id/ic_cb"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="@dimen/space_15"
+        android:button="@drawable/ic_add_circle"
+        android:checked="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

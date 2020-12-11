@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">外婆打电话</string>
+
+
+    <string name="loading">加载中…</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
+
+    <string name="permission_phone">电话权限</string>
+    <string name="permission_storage">存储权限</string>
+    <string name="permission_contacts">联系人权限</string>
+    <string name="permission_default">多情的权限</string>
+
+    <string name="frequent_contacts">常用联系人</string>
+    <string name="add_frequent_contacts">添加常用联系人</string>
+    <string name="to_dialler">键盘拨号</string>
+    <string name="no_frequent_contacts">您还没有常用联系人，快去添加吧~</string>
+    <string name="title_call_phone">请允许电话权限</string>
+    <string name="title_storage">请允许存储权限</string>
+    <string name="title_contacts">请允许联系人权限</string>
+    <string name="title_denied">您拒绝了我！</string>
+    <string name="title_crying_warning">陛下不要啊！</string>
+    <string name="content_storage">这个应用需要获取存储空间，为您存储电话信息，否则您将遇到无法无天的错误</string>
+    <string name="content_call_phone">这个应用需要获取电话权限，才能打电话哦，不然电话三生三世都打不通的哦</string>
+    <string name="content_write_contacts">这个应用需要获取联系人权限，才能查看联系人哦，不然您看到个鬼哦</string>
+    <string name="content_setting">您已无情地拒绝了这个应用温柔的请求，它可能出现神出鬼没的问题，请到[系统设置]中打开【%1$s】</string>
+    <string name="content_recheck">您已无情地拒绝了这个应用温柔的请求，它可能出现神出鬼没的问题，请允许【%1$s】请求</string>
+    <string name="content_crying_warning">陛下果然还是不给这个应用权限吗？它可能出现鬼哭狼嚎的问题哦！请陛下三思！</string>
+    <string name="go_setting">去设置</string>
+    <string name="go_check">去允许</string>
+</resources>
