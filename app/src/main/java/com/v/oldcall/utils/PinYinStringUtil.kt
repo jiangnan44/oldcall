@@ -1,8 +1,17 @@
 package com.v.oldcall.utils
 
+import android.text.TextUtils
 import android.util.ArrayMap
+import android.util.Log
+import net.sourceforge.pinyin4j.PinyinHelper
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat
-import kotlin.collections.containsKey as containsKey1
+import net.sourceforge.pinyin4j.format.HanyuPinyinToneType
+import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType
+import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination
+import java.lang.StringBuilder
+import java.util.*
+import java.util.regex.Pattern
 
 /**
  * Author:v
@@ -30,7 +39,10 @@ object PinYinStringUtil {
         homophoneFirstName["向"] = "项"
     }
 
-    public fun getPinYin(src: String?): String {
+    /**
+     * 全拼 ： 兰丫头 --LANYATOU
+     */
+    fun getPinYin(src: String?): String {
         if (src == null) {
             return ""
         }
@@ -44,10 +56,156 @@ object PinYinStringUtil {
         if (homophoneFirstName.containsKey(firstChar)) {
             s = s.replace(firstChar, homophoneFirstName[firstChar]!!, true)
         }
-        val t1 = s.toCharArray()
-        val t2 = arrayOfNulls<String>(t1.size)
-        val pyFormat= HanyuPinyinOutputFormat()
-        return ""
+        val srcArray = s.toCharArray()
+        var pyArray = arrayOfNulls<String>(srcArray.size)
+        val pyFormat = HanyuPinyinOutputFormat()
+        pyFormat.caseType = HanyuPinyinCaseType.LOWERCASE
+        pyFormat.toneType = HanyuPinyinToneType.WITHOUT_TONE
+        pyFormat.vCharType = HanyuPinyinVCharType.WITH_V
+
+        val sb = StringBuffer()
+        for (c in srcArray) {
+            if (c.toString().matches("[\\u4E00-\\u9FA5]+".toRegex())) {
+                try {
+                    pyArray = PinyinHelper.toHanyuPinyinStringArray(c, pyFormat)
+                } catch (e: BadHanyuPinyinOutputFormatCombination) {
+                    e.printStackTrace()
+                }
+                sb.append(pyArray[0])
+            } else {
+                sb.append(c)
+            }
+        }
+
+        return sb.toString().toUpperCase(Locale.getDefault())
     }
 
+    /**
+     * 首字拼音：王李三 --WANG
+     */
+    fun getFirstPinYin(src: String?): String {
+        if (src == null) {
+            return ""
+        }
+
+        var s = src.trim()
+        if (s.isEmpty()) {
+            return ""
+        }
+
+        val firstChar = s.first().toString()
+
+        if (!isHanZi(s)) {
+            return firstChar.toUpperCase(Locale.getDefault())
+        }
+
+        s = if (homophoneFirstName.containsKey(firstChar)) {
+            homophoneFirstName[firstChar]!!
+        } else {
+            firstChar
+        }
+
+        val srcArray = s.toCharArray()
+        var pyArray = arrayOfNulls<String>(srcArray.size)
+        val pyFormat = HanyuPinyinOutputFormat()
+        pyFormat.caseType = HanyuPinyinCaseType.LOWERCASE
+        pyFormat.toneType = HanyuPinyinToneType.WITHOUT_TONE
+        pyFormat.vCharType = HanyuPinyinVCharType.WITH_V
+        val ret = StringBuffer()
+
+        for (c in srcArray) {
+            if (c.toString().matches("[\\u4E00-\\u9FA5]+".toRegex())) {
+                try {
+                    pyArray = PinyinHelper.toHanyuPinyinStringArray(c, pyFormat)
+                } catch (e: BadHanyuPinyinOutputFormatCombination) {
+                    e.printStackTrace()
+                }
+                ret.append(pyArray[0])
+            } else {
+                ret.append(c)
+            }
+        }
+
+        return ret.toString().toUpperCase(Locale.getDefault())
+    }
+
+    /**
+     * 简拼 如 王大三 --WDS
+     */
+    fun getPinYinHeadChar(src: String?): String {
+        if (src == null || src.trim().isEmpty()) {
+            return ""
+        }
+
+        val ret = StringBuilder()
+        for (c in src) {
+            val pyArray = PinyinHelper.toHanyuPinyinStringArray(c)
+            if (null != pyArray) {
+                ret.append(pyArray[0][0])
+            } else {
+                ret.append(c)
+            }
+        }
+
+        return ret.toString().toUpperCase(Locale.getDefault())
+    }
+
+    /**
+     * 获得汉语拼音首字母 如 王大三 --W
+     */
+    fun getHanZiAlphaLetter(src: String?): String {
+        if (src == null) {
+            return "#"
+        }
+
+        var s = src.trim()
+        if (s.isEmpty()) {
+            return "#"
+        }
+        if (!isHanZi(s) && !isLetter(s)) {
+            return "#"
+        }
+
+        val c = s.first().toString()
+        if (Pattern.compile("^[A-Za-z]+$").matcher(c).matches()) {
+            return c.toUpperCase(Locale.getDefault())
+        } else {
+            val headChars = getHeadChar(src)
+            if (!TextUtils.isEmpty(headChars)) {
+                return headChars.first().toString().toUpperCase(Locale.getDefault())
+            }
+        }
+        return "#"
+    }
+
+    private fun getHeadChar(src: String): String {
+
+        var s = src.trim()
+        if (s.isEmpty()) {
+            return ""
+        }
+        val firstChar = s.first().toString()
+        if (homophoneFirstName.containsKey(firstChar)) {
+            s = homophoneFirstName[firstChar]!!
+        }
+        val c = s.first()
+        val pyArray = PinyinHelper.toHanyuPinyinStringArray(c)
+        val ret = if (pyArray != null) {
+            pyArray[0][0]
+        } else {
+            c
+        }
+        return ret.toString().toUpperCase(Locale.getDefault())
+    }
+
+
+    fun isLetter(src: String): Boolean {
+        val c = src.first().toString()
+        return (Pattern.compile("^[A-Za-z]+$").matcher(c).matches())
+    }
+
+    fun isHanZi(src: String): Boolean {
+        val c = src.first().toString()
+        return (Pattern.compile("[\\u4E00-\\u9FA5]+").matcher(c).matches())
+    }
 }
