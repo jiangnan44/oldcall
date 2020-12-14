@@ -48,32 +48,8 @@ class MainActivity : BaseMvpActivity<MainPresenter<MainContract.View>>(),
     override fun initData() {
         goCheckPermission()
 //        mPresenter?.showFrequentContacts()
-        test()
     }
 
-
-    private fun test() {
-        val tmp = arrayOf(
-            "WANGDA",
-            "王大三",
-            "姜小强",
-            "卫老板",
-            "兰丫头",
-            "李白",
-            "江姐",
-            "叇亝",
-            "厸厹",
-            null
-        )
-        for (s in tmp) {
-            Log.w("vvv", "$s --${PinYinStringUtil.getPinYin(s)}")
-            Log.w("vvv", "$s --${PinYinStringUtil.getFirstPinYin(s)}")
-            Log.w("vvv", "$s --${PinYinStringUtil.getHanZiAlphaLetter(s)}")
-            Log.w("vvv", "$s --${PinYinStringUtil.getPinYinHeadChar(s)}")
-            Log.e("vvv", "**************************************")
-        }
-
-    }
 
     override fun showNoContacts(msg: String) {
         dismissLoading()

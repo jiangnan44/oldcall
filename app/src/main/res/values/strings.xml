@@ -28,4 +28,9 @@
     <string name="content_crying_warning">陛下果然还是不给这个应用权限吗？它可能出现鬼哭狼嚎的问题哦！请陛下三思！</string>
     <string name="go_setting">去设置</string>
     <string name="go_check">去允许</string>
+
+
+    <string name="search_contact_hint">输入搜索信息</string>
+
+
 </resources>

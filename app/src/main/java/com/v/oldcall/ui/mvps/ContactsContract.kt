@@ -9,14 +9,14 @@ import com.v.oldcall.entities.ContactEntity
  */
 class ContactsContract {
     interface Model : BaseContract.BaseModel {
-        suspend fun getContacts(context:Context?): List<ContactEntity?>?
-        suspend fun searchContacts(): List<ContactEntity?>?
+        suspend fun getContacts(context:Context?): List<ContactEntity>?
+        suspend fun searchContacts(key: String): List<ContactEntity>?
         suspend fun add2FrequentContacts(contact: ContactEntity): Boolean
     }
 
     interface View : BaseContract.BaseView {
-        fun onContactsGot(list: List<ContactEntity?>?)
-        fun onContactsSearched(list: List<ContactEntity?>?)
+        fun onContactsGot(list: List<ContactEntity>?)
+        fun onContactsSearched(list: List<ContactEntity>?)
         fun onAddFrequentContacts(contact: ContactEntity, ret: Boolean)
     }
 

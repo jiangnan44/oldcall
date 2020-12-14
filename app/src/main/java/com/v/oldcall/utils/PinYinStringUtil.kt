@@ -95,7 +95,7 @@ object PinYinStringUtil {
 
         val firstChar = s.first().toString()
 
-        if (!isHanZi(s)) {
+        if (!isHanZi(firstChar)) {
             return firstChar.toUpperCase(Locale.getDefault())
         }
 
@@ -162,12 +162,13 @@ object PinYinStringUtil {
         if (s.isEmpty()) {
             return "#"
         }
-        if (!isHanZi(s) && !isLetter(s)) {
+
+        val c = s.first().toString()
+        if (!isHanZi(c) && !isLetter(c)) {
             return "#"
         }
 
-        val c = s.first().toString()
-        if (Pattern.compile("^[A-Za-z]+$").matcher(c).matches()) {
+        if (isLetter(c)) {
             return c.toUpperCase(Locale.getDefault())
         } else {
             val headChars = getHeadChar(src)
@@ -200,12 +201,17 @@ object PinYinStringUtil {
 
 
     fun isLetter(src: String): Boolean {
-        val c = src.first().toString()
-        return (Pattern.compile("^[A-Za-z]+$").matcher(c).matches())
+        return (Pattern.compile("^[A-Za-z]+$").matcher(src).matches())
     }
 
     fun isHanZi(src: String): Boolean {
-        val c = src.first().toString()
-        return (Pattern.compile("[\\u4E00-\\u9FA5]+").matcher(c).matches())
+        return (Pattern.compile("[\\u4E00-\\u9FA5]+").matcher(src).matches())
+    }
+
+    /**
+     * @param str must be a char
+     */
+     fun isNumber(str: String): Boolean {
+        return Pattern.compile("^[1-9]+$").matcher(str).matches()
     }
 }

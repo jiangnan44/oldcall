@@ -41,8 +41,20 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseHolder> {
     override fun getItemCount(): Int = items.size
 
 
+    fun getItem(position: Int): T {
+        return items[position]!!
+    }
+
+    fun getDataList(): MutableList<T?> = items
+
     fun addData(items: List<T?>) {
         this.items.addAll(items)
+        notifyDataSetChanged()
+    }
+
+    fun addNewList(list: List<T?>) {
+        items.clear()
+        items.addAll(list)
         notifyDataSetChanged()
     }
 

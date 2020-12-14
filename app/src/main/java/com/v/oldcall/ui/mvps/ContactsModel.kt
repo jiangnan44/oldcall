@@ -4,6 +4,10 @@ import android.content.ContentUris
 import android.content.Context
 import android.util.Log
 import com.v.oldcall.entities.ContactEntity
+import com.v.oldcall.utils.ContactComparator
+import java.util.*
+import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 
 /**
  * Author:v
@@ -17,10 +21,16 @@ class ContactsModel : ContactsContract.Model {
     private val photo = android.provider.ContactsContract.CommonDataKinds.Phone.PHOTO_ID
     private val uri = android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI
 
+    private var cacheList: MutableList<ContactEntity>? = ArrayList()
 
-    override suspend fun getContacts(context: Context?): List<ContactEntity?>? {
+
+    override suspend fun getContacts(context: Context?): List<ContactEntity>? {
         if (context == null) return null
-        Log.w("vvv","getContacts")
+
+        if (cacheList!!.size > 0) {
+            return cacheList
+        }
+
         val list: ArrayList<ContactEntity> = ArrayList()
         val cr = context.contentResolver
         val cursor = cr.query(uri, arrayOf(id, photo, phone, name), null, null, null)
@@ -46,14 +56,50 @@ class ContactsModel : ContactsContract.Model {
             }
             it.close()
         }
+        if (list.isNotEmpty()) {
+            Collections.sort(list, ContactComparator())
+            addEmptyItem2Last(list)
+        }
+        cacheList!!.addAll(list)
         return list
     }
 
-    override suspend fun searchContacts(): List<ContactEntity?>? {
-        TODO("Not yet implemented")
+    override suspend fun searchContacts(key: String): List<ContactEntity>? {
+        val results: MutableList<ContactEntity> = ArrayList()
+        val patten = Pattern.quote(key)
+        val pattern = Pattern.compile(patten, Pattern.CASE_INSENSITIVE)
+        cacheList?.let {
+            for (item in it) {
+                val matcherWord = pattern.matcher(item.alpha)
+                val matcherPy = pattern.matcher(item.pinyin)
+                val matcherPhone = pattern.matcher(item.phone)
+                val matcherName = pattern.matcher(item.name)
+                if (matcherWord.find() || matcherPy.find() || matcherName.find() || matcherPhone.find()) {
+                    results.add(item)
+                }
+            }
+
+        }
+        addEmptyItem2Last(results)
+        return results
     }
 
     override suspend fun add2FrequentContacts(contact: ContactEntity): Boolean {
         TODO("Not yet implemented")
+    }
+
+    override fun onDestroy() {
+        cacheList?.let {
+            it.clear()
+            cacheList = null
+        }
+    }
+
+    private fun addEmptyItem2Last(list: MutableList<ContactEntity>) {
+        if (list.isEmpty()) return
+        val empty = ContactEntity()
+        empty.name = " "
+        empty.phone = " "
+        list.add(empty)
     }
 }

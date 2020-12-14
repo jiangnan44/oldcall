@@ -34,6 +34,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.AddContactsActivity"
+            android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.PermissionCheckActivity"

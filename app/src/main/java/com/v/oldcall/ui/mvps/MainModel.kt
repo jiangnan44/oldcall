@@ -11,4 +11,8 @@ class MainModel:MainContract.Model {
         TODO("Not yet implemented")
     }
 
+    override fun onDestroy() {
+        TODO("Not yet implemented")
+    }
+
 }

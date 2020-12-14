@@ -8,7 +8,10 @@ import java.lang.ref.WeakReference
  * Time:2020/11/26
  */
 class BaseContract {
-    interface BaseModel {}
+    interface BaseModel {
+        fun onDestroy()
+    }
+
     interface BaseView {
         fun showLoading()
         fun dismissLoading()

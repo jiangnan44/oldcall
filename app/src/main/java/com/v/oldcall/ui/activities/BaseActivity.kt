@@ -17,7 +17,7 @@ import com.v.oldcall.ui.dialogs.LoadingDialog
 abstract class BaseActivity : AppCompatActivity() {
 
     private var loadingDialog: LoadingDialog? = null
-    private var mToolbar: Toolbar? = null
+    protected var mToolbar: Toolbar? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

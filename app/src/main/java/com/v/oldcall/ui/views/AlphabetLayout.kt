@@ -1,6 +1,7 @@
 package com.v.oldcall.ui.views
 
 import android.content.Context
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -78,8 +79,8 @@ class AlphabetLayout : LinearLayout {
 
     }
 
-    public fun updateCurrentLetter(letter: String) {
-        mAlphabetView.updateCurrentWord(letter)
+    public fun updateCurrentLetter(letter: String?) {
+        letter?.let { mAlphabetView.updateCurrentWord(it) }
     }
 
     public fun setOnLetterChooseListener(listener: OnLetterChooseListener) {

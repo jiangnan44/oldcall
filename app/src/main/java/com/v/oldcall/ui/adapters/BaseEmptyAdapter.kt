@@ -47,7 +47,6 @@ abstract class BaseEmptyAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
     }
 
 
-
     abstract fun bindHolder(holder: VH, position: Int)
 
     protected fun extendEmptyHolder(holder: BaseEmptyAdapter<*, *>.EmptyHolder, position: Int) {}
@@ -91,6 +90,8 @@ abstract class BaseEmptyAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
             items.size
         }
     }
+
+    fun getItemSize() = items.size
 
     override fun getItemViewType(position: Int): Int {
         return if (items.size == 0) {

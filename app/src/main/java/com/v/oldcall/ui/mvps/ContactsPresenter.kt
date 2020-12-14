@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.v.oldcall.entities.ContactEntity
 import kotlinx.coroutines.*
+import java.util.regex.Pattern
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -39,7 +40,9 @@ class ContactsPresenter<V : ContactsContract.View> :
     }
 
     override fun searchContacts(key: String) {
-        TODO("Not yet implemented")
+        startCoroutine {
+            mView?.onContactsSearched(mModel?.searchContacts(key))
+        }
     }
 
     override fun add2FrequentContacts(contact: ContactEntity) {
