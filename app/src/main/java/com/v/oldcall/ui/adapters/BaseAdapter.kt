@@ -30,13 +30,13 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseHolder> {
         this.mLayoutId = layoutId
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseHolder {
+     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseHolder {
         val view = LayoutInflater.from(mContext).inflate(mLayoutId, parent, false)
-        return getViewHolder(view)
+        return getRealViewHolder(view)
     }
 
 
-    abstract fun getViewHolder(itemView: View): BaseHolder
+    abstract fun getRealViewHolder(itemView: View): BaseHolder
 
     override fun getItemCount(): Int = items.size
 

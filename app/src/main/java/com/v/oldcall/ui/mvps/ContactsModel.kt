@@ -58,7 +58,6 @@ class ContactsModel : ContactsContract.Model {
         }
         if (list.isNotEmpty()) {
             Collections.sort(list, ContactComparator())
-            addEmptyItem2Last(list)
         }
         cacheList!!.addAll(list)
         return list
@@ -80,7 +79,6 @@ class ContactsModel : ContactsContract.Model {
             }
 
         }
-        addEmptyItem2Last(results)
         return results
     }
 
@@ -95,11 +93,5 @@ class ContactsModel : ContactsContract.Model {
         }
     }
 
-    private fun addEmptyItem2Last(list: MutableList<ContactEntity>) {
-        if (list.isEmpty()) return
-        val empty = ContactEntity()
-        empty.name = " "
-        empty.phone = " "
-        list.add(empty)
-    }
+
 }

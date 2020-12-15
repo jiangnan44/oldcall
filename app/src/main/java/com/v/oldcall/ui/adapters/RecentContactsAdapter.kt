@@ -14,11 +14,11 @@ class RecentContactsAdapter : BaseEmptyAdapter<ContactEntity, ContactsAdapter.Vi
 
     constructor(mContext: Context) : super(mContext, R.layout.item_contacts)
 
-    override fun bindHolder(holder: ContactsAdapter.ViewHolder, position: Int) {
+    override fun bindRealHolder(holder: ContactsAdapter.ViewHolder, position: Int) {
         TODO("Not yet implemented")
     }
 
-    override fun getViewHolder(itemView: View): BaseHolder {
+    override fun getRealViewHolder(itemView: View): BaseHolder {
         TODO("Not yet implemented")
     }
 

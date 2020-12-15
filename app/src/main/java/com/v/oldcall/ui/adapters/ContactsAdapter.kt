@@ -15,11 +15,11 @@ import com.v.oldcall.utils.CommonUtil
  * Author:v
  * Time:2020/12/9
  */
-class ContactsAdapter : BaseEmptyAdapter<ContactEntity, ContactsAdapter.ViewHolder> {
+class ContactsAdapter : BaseMagicAdapter<ContactEntity, ContactsAdapter.ViewHolder> {
     constructor(mContext: Context) : super(mContext, R.layout.item_contacts)
 
 
-    override fun bindHolder(holder: ContactsAdapter.ViewHolder, position: Int) {
+    override fun bindRealHolder(holder: ContactsAdapter.ViewHolder, position: Int) {
         items[position]?.let {
             if (it.avatar == null || TextUtils.isEmpty(it.avatar.toString())) {
                 holder.ivAvatar.visibility = View.INVISIBLE
@@ -45,7 +45,8 @@ class ContactsAdapter : BaseEmptyAdapter<ContactEntity, ContactsAdapter.ViewHold
 
     }
 
-    override fun getViewHolder(itemView: View): ContactsAdapter.ViewHolder = ViewHolder(itemView)
+    override fun getRealViewHolder(itemView: View): ContactsAdapter.ViewHolder = ViewHolder(itemView)
+
 
     inner class ViewHolder(itemView: View) : BaseHolder(itemView) {
         var ivAvatar: ImageView

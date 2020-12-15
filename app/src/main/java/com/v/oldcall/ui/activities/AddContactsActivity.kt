@@ -1,6 +1,8 @@
 package com.v.oldcall.ui.activities
 
 import android.text.TextUtils
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
@@ -45,6 +47,10 @@ class AddContactsActivity : ContactsContract.View,
         sortLayout = findViewById(R.id.aca_al)
         rvContacts = findViewById(R.id.aca_rv)
         adapter = ContactsAdapter(this)
+        val footer = LayoutInflater.from(this)
+            .inflate(R.layout.view_no_more, window.decorView as ViewGroup, false)
+        adapter.addFooterView(footer)
+        adapter.setEmptyTextHint(getString(R.string.no_contacts_now))
         rvContacts.let {
             it.isNestedScrollingEnabled = false
             val llm = LinearLayoutManager(this)
@@ -72,7 +78,7 @@ class AddContactsActivity : ContactsContract.View,
         }
 
         etSearch.addTextChangedListener {
-            if (adapter.getItemSize() <= 0) {
+            if (adapter.getRealItemCount() <= 0) {
                 return@addTextChangedListener
             }
             val keyWord = it.toString()
@@ -86,7 +92,7 @@ class AddContactsActivity : ContactsContract.View,
     private fun connectData() {
         sortLayout.setOnLetterChooseListener(object : AlphabetLayout.OnLetterChooseListener {
             override fun onLetterChoose(letter: String) {
-                for (i in 0 until adapter.getItemSize()) {
+                for (i in 0 until adapter.getRealItemCount()) {
                     if (adapter.getItem(i).alpha.equals(letter)) {
                         rvContacts.scrollToPosition(i)
                         break

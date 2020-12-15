@@ -24,8 +24,7 @@ abstract class BaseEmptyAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
 
     companion object {
         private const val TAG = "BaseEmptyAdapter"
-        private const val VIEW_TYPE_NORMAL = 0x10
-        private const val VIEW_TYPE_EMPTY = 0x11
+        private const val VIEW_TYPE_EMPTY = Integer.MAX_VALUE - 1
     }
 
 
@@ -34,7 +33,7 @@ abstract class BaseEmptyAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
     private var tvText: String? = null
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseHolder {
+    final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseHolder {
         if (viewType == VIEW_TYPE_EMPTY) {
             val emptyView =
                 LayoutInflater.from(mContext)
@@ -43,16 +42,11 @@ abstract class BaseEmptyAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
         }
         val itemView = LayoutInflater.from(mContext)
             .inflate(mLayoutId, parent, false)
-        return getViewHolder(itemView)
+        return getRealViewHolder(itemView)
     }
 
 
-    abstract fun bindHolder(holder: VH, position: Int)
-
-    protected fun extendEmptyHolder(holder: BaseEmptyAdapter<*, *>.EmptyHolder, position: Int) {}
-
-
-    override fun onBindViewHolder(holder: BaseHolder, position: Int) {
+    final override fun onBindViewHolder(holder: BaseHolder, position: Int) {
         if (holder is BaseEmptyAdapter<*, *>.EmptyHolder) {
             holder.btn.setOnClickListener(emptyClickListener)
             if (!TextUtils.isEmpty(tvText)) {
@@ -60,10 +54,15 @@ abstract class BaseEmptyAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
             }
             if (!TextUtils.isEmpty(btnText)) {
                 holder.btn.text = btnText
+            } else {
+                holder.btn.visibility = View.INVISIBLE
             }
             extendEmptyHolder(holder, position)
-        } else bindHolder(holder as VH, position)
+        } else bindRealHolder(holder as VH, position)
     }
+
+    abstract fun bindRealHolder(holder: VH, position: Int)
+    protected fun extendEmptyHolder(holder: BaseEmptyAdapter<*, *>.EmptyHolder, position: Int) {}
 
 
     inner class EmptyHolder(itemView: View) : BaseHolder(itemView) {
@@ -83,7 +82,7 @@ abstract class BaseEmptyAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
         btnText = txt
     }
 
-    override fun getItemCount(): Int {
+    final override fun getItemCount(): Int {
         return if (items.size == 0) {
             1
         } else {
@@ -91,13 +90,18 @@ abstract class BaseEmptyAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
         }
     }
 
-    fun getItemSize() = items.size
+    fun getRealItemCount() = items.size
 
-    override fun getItemViewType(position: Int): Int {
-        return if (items.size == 0) {
-            VIEW_TYPE_EMPTY
-        } else {
-            VIEW_TYPE_NORMAL
+    final override fun getItemViewType(position: Int): Int {
+        if (items.size == 0) {
+            return VIEW_TYPE_EMPTY
         }
+
+        return getRealItemViewType(position)
     }
+
+    /**
+     * NOTE:don't conflict with @see #VIEW_TYPE_EMPTY
+     */
+    fun getRealItemViewType(position: Int): Int = 0
 }
