@@ -17,7 +17,7 @@
         android:theme="@style/Theme.OldApplication">
 
         <activity
-            android:name=".ui.activities.MainActivity"
+            android:name="com.v.oldcall.activities.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,17 +27,17 @@
         </activity>
 
         <activity
-            android:name=".ui.activities.MakeCallActivity"
+            android:name="com.v.oldcall.activities.MakeCallActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activities.EditContactActivity"
+            android:name="com.v.oldcall.activities.EditContactActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activities.AddContactsActivity"
+            android:name="com.v.oldcall.activities.AddContactsActivity"
             android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activities.PermissionCheckActivity"
+            android:name="com.v.oldcall.activities.PermissionCheckActivity"
             android:theme="@style/TranslucentTheme" />
 
     </application>

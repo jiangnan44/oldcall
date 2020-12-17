@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.AddContactsActivity">
+    tools:context=".activities.AddContactsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -47,7 +47,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
-    <com.v.oldcall.ui.views.AlphabetLayout
+    <com.v.oldcall.views.AlphabetLayout
         android:id="@+id/aca_al"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
