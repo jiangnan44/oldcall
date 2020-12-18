@@ -4,6 +4,7 @@ import android.net.Uri
 import com.v.oldcall.utils.PinYinStringUtil
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
+import io.objectbox.annotation.Transient
 
 /**
  * Author:v
@@ -16,6 +17,9 @@ class ContactEntity {
     var cid: Long = 0
     var phone: String? = null
     var avatar: String? = null
+
+    @Transient
+    var avatarColor: Int = 0
     var pinyin: String? = null
     var alpha: String? = null
     var jianpin: String? = null

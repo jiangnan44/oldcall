@@ -8,18 +8,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.v.oldcall.R
 import com.v.oldcall.entities.ContactEntity
-import com.v.oldcall.adapters.RecentContactsAdapter
+import com.v.oldcall.adapters.FrequentContactsAdapter
 import com.v.oldcall.mvps.MainContract
 import com.v.oldcall.mvps.MainPresenter
 import com.v.oldcall.utils.AvatarLoader
+import com.v.oldcall.utils.ToastManager
 
 
 class MainActivity : BaseMvpActivity<MainPresenter<MainContract.View>>(),
-    MainContract.View, View.OnClickListener {
+    MainContract.View, View.OnClickListener, FrequentContactsAdapter.HandleContactListener {
 
     private val TAG = "MainActivity"
     private var rvContract: RecyclerView? = null
-    private lateinit var adapter: RecentContactsAdapter
+    private lateinit var adapter: FrequentContactsAdapter
 
 
     override fun getContentLayoutId(): Int {
@@ -33,10 +34,12 @@ class MainActivity : BaseMvpActivity<MainPresenter<MainContract.View>>(),
         btnAddContract.setOnClickListener(this)
         btnDialler.setOnClickListener(this)
 
-        rvContract = findViewById(R.id.rv_contacts)
-        adapter = RecentContactsAdapter(this)
-        adapter.setEmptyButtonClickListener(this)
-        rvContract!!.let {
+        adapter = FrequentContactsAdapter(this).also {
+            it.setEmptyButtonClickListener(this)
+            it.setHandleContactListener(this)
+        }
+
+        rvContract = findViewById<RecyclerView>(R.id.rv_contacts).also {
             val llm = LinearLayoutManager(this)
             llm.orientation = LinearLayoutManager.VERTICAL
             it.layoutManager = llm
@@ -46,17 +49,28 @@ class MainActivity : BaseMvpActivity<MainPresenter<MainContract.View>>(),
 
     override fun initData() {
         goCheckPermission()
-//        mPresenter?.showFrequentContacts()
+        mPresenter?.showFrequentContacts()
     }
 
-
+    override fun onResume() {
+        super.onResume()
+        mPresenter?.showFrequentContacts()
+    }
 
     override fun showNoContacts(msg: String) {
-        dismissLoading()
+        adapter.setEmptyTextHint(msg)
+        adapter.addNewList(emptyList())
     }
 
-    override fun updateContacts(contactList: List<ContactEntity?>?) {
-        dismissLoading()
+    override fun onContactRemoved(removed: Boolean, position: Int) {
+        if (removed) {
+            ToastManager.showShort(this, getString(R.string.remove_contact_success))
+            adapter.remove(position)
+        }
+    }
+
+    override fun updateContacts(contactList: List<ContactEntity>) {
+        adapter.addNewList(contactList)
     }
 
 
@@ -101,5 +115,10 @@ class MainActivity : BaseMvpActivity<MainPresenter<MainContract.View>>(),
     override fun onDestroy() {
         super.onDestroy()
         AvatarLoader.destroy()
+    }
+
+    override fun removeContact(contact: ContactEntity, position: Int) {
+        Log.w("vvv", "removeContact posi=$position id=${contact.id}")
+        mPresenter?.removeContact(contact, position)
     }
 }

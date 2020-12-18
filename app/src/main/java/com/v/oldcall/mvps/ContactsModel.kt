@@ -93,6 +93,7 @@ class ContactsModel : ContactsContract.Model {
         }
         var ret = -1L
         withContext(Dispatchers.IO) {
+            contact.isFrequent = true
             ret = ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).put(contact)
         }
         return ret >= 0

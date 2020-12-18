@@ -154,13 +154,21 @@ class AddContactsActivity : ContactsContract.View,
     override fun onAddFrequentContacts(position: Int, success: Boolean) {
         adapter.getItem(position).isFrequent = success
         adapter.notifyItemChanged(position)
-        Log.w("vvv", "onAddFrequentContacts $success --$position")
+        if (success) {
+            ToastManager.showShort(this, getString(R.string.add_contact_success))
+        } else {
+            ToastManager.showShort(this, getString(R.string.add_contact_failed))
+        }
     }
 
     override fun onRemoveFrequentContacts(position: Int, success: Boolean) {
         adapter.getItem(position).isFrequent = !success
         adapter.notifyItemChanged(position)
-        Log.w("vvv", "onRemoveFrequentContacts $success --$position")
+        if (success) {
+            ToastManager.showShort(this, getString(R.string.remove_contact_success))
+        } else {
+            ToastManager.showShort(this, getString(R.string.remove_contact_failed))
+        }
     }
 
 

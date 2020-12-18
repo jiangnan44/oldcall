@@ -8,17 +8,20 @@ import com.v.oldcall.entities.ContactEntity
  */
 class MainContract {
     interface Model : BaseContract.BaseModel {
-        fun getContacts(): List<ContactEntity?>?
+        suspend fun getContacts(): List<ContactEntity>?
+        suspend fun removeContact(contact: ContactEntity): Boolean
     }
 
     interface View : BaseContract.BaseView {
         fun showNoContacts(msg: String)
-        fun updateContacts(contactList: List<ContactEntity?>?)
+        fun onContactRemoved(removed: Boolean, position: Int)
+        fun updateContacts(contactList: List<ContactEntity>)
     }
 
-    abstract class Presenter<V,M> : BaseContract.BasePresenter<V,M>() {
+    abstract class Presenter<V, M> : BaseContract.BasePresenter<V, M>() {
         abstract fun showFrequentContacts()
         abstract fun updateRecentList()
+        abstract fun removeContact(contact: ContactEntity, position: Int)
         abstract fun go2Call(phone: String)
     }
 

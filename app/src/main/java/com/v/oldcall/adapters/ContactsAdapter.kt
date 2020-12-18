@@ -22,11 +22,14 @@ class ContactsAdapter : BaseMagicAdapter<ContactEntity, ContactsAdapter.ViewHold
 
     override fun bindRealHolder(holder: ContactsAdapter.ViewHolder, position: Int) {
         items[position]?.let {
-            if (it.avatar == null || TextUtils.isEmpty(it.avatar.toString())) {
+            if (TextUtils.isEmpty(it.avatar)) {
                 holder.ivAvatar.visibility = View.INVISIBLE
                 holder.tvAvatar.visibility = View.VISIBLE
+                if (it.avatarColor <= 0) {
+                    it.avatarColor = CommonUtil.getRandomColor()
+                }
                 holder.tvAvatar.background =
-                    ContextCompat.getDrawable(mContext, CommonUtil.getRandomColor())
+                    ContextCompat.getDrawable(mContext, it.avatarColor)
                 holder.tvAvatar.text = it.name!!.last().toString()
             } else {
                 holder.ivAvatar.visibility = View.VISIBLE
@@ -37,22 +40,19 @@ class ContactsAdapter : BaseMagicAdapter<ContactEntity, ContactsAdapter.ViewHold
             holder.tvPhone.text = it.phone
             holder.tvName.text = it.name
             holder.cb.isChecked = it.isFrequent
-            holder.cb.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
-                override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-                    Log.w("vvv", "checked=$isChecked position=$position button=${buttonView.hashCode()}")
-                    if (isChecked == it.isFrequent || listener == null) return
-                    if (isChecked) {
-                        listener!!.addContact2Frequent(it, position)
-                    } else {
-                        listener!!.removeContactFromFrequent(it, position)
-                    }
+            holder.cb.setOnClickListener {
+                holder.itemView.performClick()
+            }
+
+
+            holder.itemView.setOnClickListener { _ ->
+                val isChecked = holder.cb.isChecked
+                if (isChecked == it.isFrequent || listener == null) return@setOnClickListener
+                if (isChecked) {
+                    listener!!.addContact2Frequent(it, position)
+                } else {
+                    listener!!.removeContactFromFrequent(it, position)
                 }
-
-            })
-
-            holder.itemView.setOnClickListener {
-                Log.w("vvv","itemclick position=$position")
-                holder.cb.isChecked = !holder.cb.isChecked
             }
         }
 

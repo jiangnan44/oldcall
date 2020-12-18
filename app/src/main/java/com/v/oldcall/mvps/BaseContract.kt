@@ -1,7 +1,9 @@
 package com.v.oldcall.mvps
 
+import kotlinx.coroutines.*
 import java.lang.ref.Reference
 import java.lang.ref.WeakReference
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Author:v
@@ -19,6 +21,16 @@ class BaseContract {
     }
 
     abstract class BasePresenter<V, M> {
+        private val scope = CoroutineScope(Dispatchers.Main)
+
+        fun startCoroutine(
+            context: CoroutineContext = Dispatchers.Main,
+            start: CoroutineStart = CoroutineStart.DEFAULT,
+            block: suspend CoroutineScope.() -> Unit
+        ): Job = scope.launch(
+            context, start, block
+        )
+
         var mViewRef: Reference<V>? = null
         var mModel: M? = null
 
@@ -32,6 +44,7 @@ class BaseContract {
         }
 
         open fun detach() {
+            scope.cancel()
             mViewRef?.let {
                 if (it.get() != null) {
                     it.clear()

@@ -11,15 +11,7 @@ import kotlin.coroutines.CoroutineContext
  */
 class ContactsPresenter<V : ContactsContract.View> :
     ContactsContract.Presenter<V, ContactsModel>() {
-    private val scope = CoroutineScope(Dispatchers.Main)
 
-    fun startCoroutine(
-        context: CoroutineContext = Dispatchers.Main,
-        start: CoroutineStart = CoroutineStart.DEFAULT,
-        block: suspend CoroutineScope.() -> Unit
-    ): Job = scope.launch(
-        context, start, block
-    )
 
     init {
         mModel = ContactsModel()
@@ -63,7 +55,6 @@ class ContactsPresenter<V : ContactsContract.View> :
     }
 
     override fun detach() {
-        scope.cancel()
         super.detach()
         mModel?.destroy()
     }
