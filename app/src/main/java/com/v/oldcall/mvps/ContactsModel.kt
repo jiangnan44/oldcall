@@ -2,6 +2,7 @@ package com.v.oldcall.mvps
 
 import android.content.ContentUris
 import android.content.Context
+import android.util.Log
 import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.utils.ContactComparator
 import com.v.oldcall.utils.ObjectBoxHelper
@@ -33,6 +34,9 @@ class ContactsModel : ContactsContract.Model {
             return cacheList
         }
 
+        val frequentList =
+            ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).query().build().find()
+
         val list: ArrayList<ContactEntity> = ArrayList()
         val cr = context.contentResolver
         val cursor = cr.query(uri, arrayOf(id, photo, phone, name), null, null, null)
@@ -54,6 +58,15 @@ class ContactsModel : ContactsContract.Model {
                         ce.cid
                     ).toString()
                 }
+
+                for (item in frequentList) {
+                    if (ce.phone == item.phone) {
+                        ce.isFrequent = true
+                        ce.id = item.id
+                        break
+                    }
+                }
+
                 list.add(ce)
             }
             it.close()
@@ -103,9 +116,14 @@ class ContactsModel : ContactsContract.Model {
         if (!contact.isFrequent || contact.name.isNullOrBlank()) {
             return false
         }
-        var ret = false
+        var ret: Boolean
         withContext(Dispatchers.IO) {
-            ret = ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).remove(contact.id)
+            ret = try {
+                ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).remove(contact.id)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
         }
         return ret
     }

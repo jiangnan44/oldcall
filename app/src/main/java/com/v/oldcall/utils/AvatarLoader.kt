@@ -7,8 +7,8 @@ import android.net.Uri
 import android.provider.ContactsContract
 import android.widget.ImageView
 import androidx.collection.LruCache
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.io.IOException
 
 /**
  * Author:v
@@ -38,21 +38,23 @@ object AvatarLoader {
     }
 
     private fun loadAvatarWithCoroutine(uri: String, iv: ImageView?) {
-        GlobalScope.launch {
+        CoroutineScope(Dispatchers.Main).launch {
             val avatar = getAvatar(uri, iv?.context)
             avatar?.let {
                 iv?.setImageBitmap(avatar)
-                lruCache?.put(uri.toString(), avatar)
+                lruCache?.put(uri, avatar)
             }
         }
     }
 
-    private fun getAvatar(uri: String, context: Context?): Bitmap? {
-        val cr = context?.contentResolver
-        val path = Uri.parse(uri)
-        val input = ContactsContract.Contacts.openContactPhotoInputStream(cr, path)
-        val ret = BitmapFactory.decodeStream(input) ?: null
-        input.close()
+    private suspend fun getAvatar(uri: String, context: Context?): Bitmap? {
+        var ret: Bitmap?
+        withContext(Dispatchers.IO) {
+            val cr = context?.contentResolver
+            val path = Uri.parse(uri)
+            val input = ContactsContract.Contacts.openContactPhotoInputStream(cr, path)
+            ret = BitmapFactory.decodeStream(input)
+        }
         return ret
     }
 

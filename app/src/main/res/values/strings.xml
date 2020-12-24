@@ -39,4 +39,9 @@
     <string name="remove_contact_success">移除成功</string>
 
 
+    <string name="remove_contact">移除</string>
+    <string name="contact_action_dial">拨号</string>
+    <string name="contact_action_modify_avatar">修改头像</string>
+
+
 </resources>

@@ -21,13 +21,17 @@ class MainModel : MainContract.Model {
     }
 
     override suspend fun removeContact(contact: ContactEntity): Boolean {
-        if (/*!contact.isFrequent ||*/ contact.name.isNullOrBlank()) {
+        if (!contact.isFrequent || contact.name.isNullOrBlank()) {
             return false
         }
-        Log.w("vvv", "mainModel remove id=" + contact.id)
-        var ret = false
+        var ret: Boolean
         withContext(Dispatchers.IO) {
-            ret = ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).remove(contact.id)
+            ret = try {
+                ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).remove(contact.id)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
         }
         return ret
     }

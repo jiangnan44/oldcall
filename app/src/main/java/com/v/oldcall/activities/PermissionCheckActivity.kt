@@ -166,6 +166,8 @@ class PermissionCheckActivity : AppCompatActivity() {
             }
         }
 
+
+
         DecisionDialog.Builder(this)
             .withTitle(title)
             .withContent(content)

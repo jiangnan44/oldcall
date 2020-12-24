@@ -27,7 +27,7 @@
         </activity>
 
         <activity
-            android:name="com.v.oldcall.activities.MakeCallActivity"
+            android:name="com.v.oldcall.activities.CallActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.v.oldcall.activities.EditContactActivity"

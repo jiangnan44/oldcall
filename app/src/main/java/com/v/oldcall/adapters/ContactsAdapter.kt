@@ -40,12 +40,11 @@ class ContactsAdapter : BaseMagicAdapter<ContactEntity, ContactsAdapter.ViewHold
             holder.tvPhone.text = it.phone
             holder.tvName.text = it.name
             holder.cb.isChecked = it.isFrequent
-            holder.cb.setOnClickListener {
-                holder.itemView.performClick()
-            }
-
+            if (position<20)
+            Log.w("vvv", "posi=$position phone=${it.phone} isFrequent=${it.isFrequent}")
 
             holder.itemView.setOnClickListener { _ ->
+                holder.cb.isChecked = !holder.cb.isChecked
                 val isChecked = holder.cb.isChecked
                 if (isChecked == it.isFrequent || listener == null) return@setOnClickListener
                 if (isChecked) {

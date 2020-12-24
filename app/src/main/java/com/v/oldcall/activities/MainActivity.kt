@@ -4,15 +4,20 @@ import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import androidx.core.content.ContextCompat.getColor
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.v.oldcall.R
-import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.adapters.FrequentContactsAdapter
+import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.mvps.MainContract
 import com.v.oldcall.mvps.MainPresenter
 import com.v.oldcall.utils.AvatarLoader
 import com.v.oldcall.utils.ToastManager
+import com.v.oldcall.views.DividerDecoration
+import com.v.oldcall.views.SlideItemHelperCallback
+import com.v.oldcall.views.SwipeRecyclerView
 
 
 class MainActivity : BaseMvpActivity<MainPresenter<MainContract.View>>(),
@@ -43,7 +48,16 @@ class MainActivity : BaseMvpActivity<MainPresenter<MainContract.View>>(),
             val llm = LinearLayoutManager(this)
             llm.orientation = LinearLayoutManager.VERTICAL
             it.layoutManager = llm
+            it.addItemDecoration(
+                DividerDecoration(
+                    llm.orientation,
+                    getColor(this, R.color.teal_3),
+                    this
+                )
+            )
             it.adapter = adapter
+            val callback = SlideItemHelperCallback(adapter)
+            ItemTouchHelper(callback).attachToRecyclerView(it)
         }
     }
 

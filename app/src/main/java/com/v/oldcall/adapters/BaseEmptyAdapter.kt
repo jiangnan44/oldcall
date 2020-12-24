@@ -11,7 +11,7 @@ import com.v.oldcall.R
  * Author:v
  * Time:2020/12/7
  */
-abstract class BaseEmptyAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
+abstract class BaseEmptyAdapter<T, VH : BaseHolder> : BaseAdapter<T, VH> {
     constructor(mContext: Context, layoutId: Int) : super(mContext, layoutId)
     constructor(mContext: Context, items: MutableList<T?>?, layoutId: Int) : super(
         mContext,
@@ -31,12 +31,12 @@ abstract class BaseEmptyAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
     private var tvText: String? = null
 
 
-    final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseHolder {
+    final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         if (viewType == VIEW_TYPE_EMPTY) {
             val emptyView =
                 LayoutInflater.from(mContext)
                     .inflate(R.layout.layout_empty_view, parent, false)
-            return BaseMagicAdapter.EmptyHolder(emptyView)
+            return BaseMagicAdapter.EmptyHolder(emptyView) as VH
         }
         val itemView = LayoutInflater.from(mContext)
             .inflate(mLayoutId, parent, false)
@@ -44,7 +44,7 @@ abstract class BaseEmptyAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
     }
 
 
-    final override fun onBindViewHolder(holder: BaseHolder, position: Int) {
+    final override fun onBindViewHolder(holder: VH, position: Int) {
         if (holder is BaseMagicAdapter.EmptyHolder) {
             holder.btn.setOnClickListener(emptyClickListener)
             if (!TextUtils.isEmpty(tvText)) {
@@ -54,13 +54,11 @@ abstract class BaseEmptyAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
                 holder.btn.text = btnText
             }
             extendEmptyHolder(holder, position)
-        } else bindRealHolder(holder as VH, position)
+        } else bindRealHolder(holder, position)
     }
 
     abstract fun bindRealHolder(holder: VH, position: Int)
     open fun extendEmptyHolder(holder: BaseMagicAdapter.EmptyHolder, position: Int) {}
-
-
 
 
     fun setEmptyButtonClickListener(listener: View.OnClickListener) {

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
  * Author:v
  * Time:2020/12/1
  */
-abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseHolder> {
+abstract class BaseAdapter<T, VH : BaseHolder> : RecyclerView.Adapter<VH> {
     protected var mContext: Context
     protected var mLayoutId: Int
     protected var items: MutableList<T?>
@@ -30,13 +30,13 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseHolder> {
         this.mLayoutId = layoutId
     }
 
-     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val view = LayoutInflater.from(mContext).inflate(mLayoutId, parent, false)
         return getRealViewHolder(view)
     }
 
 
-    abstract fun getRealViewHolder(itemView: View): BaseHolder
+    abstract fun getRealViewHolder(itemView: View): VH
 
     override fun getItemCount(): Int = items.size
 

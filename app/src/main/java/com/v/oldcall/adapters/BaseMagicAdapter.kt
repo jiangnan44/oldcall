@@ -14,7 +14,7 @@ import com.v.oldcall.R
  * Author:v
  * Time:2020/12/15
  */
-abstract class BaseMagicAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
+abstract class BaseMagicAdapter<T, VH : BaseHolder> : BaseAdapter<T, VH> {
     constructor(mContext: Context, layoutId: Int) : super(mContext, layoutId)
     constructor(mContext: Context, items: MutableList<T?>?, layoutId: Int) : super(
         mContext,
@@ -55,21 +55,21 @@ abstract class BaseMagicAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
     fun getFootersCount(): Int = mFooters.size()
 
 
-    final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseHolder {
+    final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         var itemView = mHeaders.get(viewType)
         if (itemView != null) {
-            return BaseHolder(itemView)
+            return BaseHolder(itemView) as VH
         }
         itemView = mFooters.get(viewType)
         if (itemView != null) {
-            return BaseHolder(itemView)
+            return BaseHolder(itemView) as VH
         }
 
         if (viewType == BASE_ITEM_TYPE_EMPTY) {
             val emptyView =
                 LayoutInflater.from(mContext)
                     .inflate(R.layout.layout_empty_view, parent, false)
-            return EmptyHolder(emptyView)
+            return EmptyHolder(emptyView) as VH
         }
 
         itemView = LayoutInflater.from(mContext)
@@ -78,7 +78,7 @@ abstract class BaseMagicAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
     }
 
 
-    final override fun onBindViewHolder(holder: BaseHolder, position: Int) {
+    final override fun onBindViewHolder(holder: VH, position: Int) {
         if (isHeaderViewPos(position)) {
             return
         }
@@ -96,7 +96,7 @@ abstract class BaseMagicAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
             }
             extendEmptyHolder(holder, position)
         } else {
-            bindRealHolder(holder as VH, position - getHeadersCount())
+            bindRealHolder(holder, position - getHeadersCount())
         }
 
     }

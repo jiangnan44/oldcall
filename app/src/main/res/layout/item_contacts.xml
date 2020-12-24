@@ -2,8 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackgroundBorderless">
+    android:layout_height="70dp"
+    android:background="?android:attr/selectableItemBackgroundBorderless"
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/ic_iv_avatar"
@@ -57,8 +58,70 @@
         android:layout_marginEnd="@dimen/space_15"
         android:button="@drawable/ic_add_circle_gray"
         android:checked="false"
+        android:clickable="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/ic_tv_del"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:background="@color/red"
+        android:gravity="center"
+        android:text="@string/remove_contact"
+        android:textColor="@color/white"
+        android:textSize="@dimen/txt_20"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="3:2"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/ic_iv_del"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="20dp"
+        android:background="@color/white"
+        android:src="@mipmap/ic_del_contact"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/srv_slide_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/ic_tv_mark"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/red_6"
+            android:gravity="center"
+            android:padding="@dimen/space_10"
+            android:text="置顶"
+            android:textColor="@color/white"
+            android:textSize="@dimen/txt_20" />
+
+        <TextView
+            android:id="@+id/ic_tv_remove"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/red"
+            android:gravity="center"
+            android:padding="@dimen/space_10"
+            android:text="@string/remove_contact"
+            android:textColor="@color/white"
+            android:textSize="@dimen/txt_20" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

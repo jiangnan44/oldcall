@@ -10,7 +10,7 @@ import androidx.collection.SparseArrayCompat
  * Author:v
  * Time:2020/12/15
  */
-abstract class BaseHeaderFooterAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
+abstract class BaseHeaderFooterAdapter<T, VH : BaseHolder> : BaseAdapter<T, VH> {
     private val BASE_ITEM_TYPE_HEADER = 100_000
     private val BASE_ITEM_TYPE_FOOTER = 200_000
     private val mHeaders = SparseArrayCompat<View>()
@@ -70,7 +70,7 @@ abstract class BaseHeaderFooterAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
         return items.size
     }
 
-    final override fun onBindViewHolder(holder: BaseHolder, position: Int) {
+    final override fun onBindViewHolder(holder: VH, position: Int) {
         if (isHeaderViewPos(position)) {
             return
         }
@@ -78,19 +78,19 @@ abstract class BaseHeaderFooterAdapter<T, VH : BaseHolder> : BaseAdapter<T> {
             return
         }
 
-        bindRealHolder(holder as VH, position - getHeadersCount())
+        bindRealHolder(holder, position - getHeadersCount())
     }
 
     abstract fun bindRealHolder(holder: VH, position: Int)
 
-    final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseHolder {
+    final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         var view = mHeaders.get(viewType)
         if (null != view) {
-            return BaseHolder(view)
+            return BaseHolder(view) as VH
         }
         view = mFooters.get(viewType)
         if (null != view) {
-            return BaseHolder(view)
+            return BaseHolder(view) as VH
         }
 
         view = LayoutInflater.from(mContext).inflate(mLayoutId, parent, false)
