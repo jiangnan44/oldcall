@@ -1,6 +1,5 @@
 package com.v.oldcall.entities
 
-import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 import com.v.oldcall.utils.PinYinStringUtil
@@ -13,10 +12,11 @@ import io.objectbox.annotation.Transient
  * Time:2020/11/26
  */
 @Entity
-class ContactEntity() :Parcelable {
+class ContactEntity() : Parcelable {
     @Id
     var id: Long = 0
-    var cid: Long = 0
+    var cid: Long = 0//contact id
+    var pid: Long = 0//photo id
     var phone: String? = null
     var avatar: String? = null
 
@@ -37,6 +37,7 @@ class ContactEntity() :Parcelable {
     constructor(parcel: Parcel) : this() {
         id = parcel.readLong()
         cid = parcel.readLong()
+        pid = parcel.readLong()
         phone = parcel.readString()
         avatar = parcel.readString()
         avatarColor = parcel.readInt()
@@ -44,19 +45,31 @@ class ContactEntity() :Parcelable {
         alpha = parcel.readString()
         jianpin = parcel.readString()
         isFrequent = parcel.readByte() != 0.toByte()
+        name = parcel.readString()
     }
 
 
     override fun toString(): String {
-        return "ContactEntity:id=$id,avatar=${avatar},name=$name,phone=$phone"
+        return "ContactEntity:id=$id,cid=$cid,pid=$pid,avatar=${avatar},name=$name,phone=$phone"
     }
 
     override fun describeContents(): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
-    override fun writeToParcel(dest: Parcel?, flags: Int) {
-        TODO("Not yet implemented")
+
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeLong(id)
+        dest.writeLong(cid)
+        dest.writeLong(pid)
+        dest.writeString(phone)
+        dest.writeString(avatar)
+        dest.writeInt(avatarColor)
+        dest.writeString(pinyin)
+        dest.writeString(alpha)
+        dest.writeString(jianpin)
+        dest.writeByte(if (isFrequent) 1 else 0)
+        dest.writeString(name)
     }
 
     companion object CREATOR : Parcelable.Creator<ContactEntity> {

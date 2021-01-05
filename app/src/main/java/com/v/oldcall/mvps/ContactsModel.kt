@@ -2,7 +2,6 @@ package com.v.oldcall.mvps
 
 import android.content.ContentUris
 import android.content.Context
-import android.util.Log
 import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.utils.ContactComparator
 import com.v.oldcall.utils.ObjectBoxHelper
@@ -20,7 +19,7 @@ class ContactsModel : ContactsContract.Model {
 
     private val name = android.provider.ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
     private val phone = android.provider.ContactsContract.CommonDataKinds.Phone.NUMBER
-    private val id = android.provider.ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+    private val rid = android.provider.ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID
     private val photo = android.provider.ContactsContract.CommonDataKinds.Phone.PHOTO_ID
     private val uri = android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI
 
@@ -39,20 +38,20 @@ class ContactsModel : ContactsContract.Model {
 
         val list: ArrayList<ContactEntity> = ArrayList()
         val cr = context.contentResolver
-        val cursor = cr.query(uri, arrayOf(id, photo, phone, name), null, null, null)
+        val cursor = cr.query(uri, arrayOf(rid, photo, phone, name), null, null, null)
         cursor?.let {
             val indexName = it.getColumnIndex(name)
             val indexPhone = it.getColumnIndex(phone)
             val indexPhoto = it.getColumnIndex(photo)
-            val indexId = it.getColumnIndex(id)
+            val indexId = it.getColumnIndex(rid)
 
             while (it.moveToNext()) {
                 val ce = ContactEntity()
                 ce.name = it.getString(indexName)
                 ce.phone = it.getString(indexPhone)
                 ce.cid = it.getLong(indexId)
-                val photoId = it.getLong(indexPhoto)
-                if (photoId > 0) {
+                ce.pid = it.getLong(indexPhoto)
+                if (ce.pid > 0) {
                     ce.avatar = ContentUris.withAppendedId(
                         android.provider.ContactsContract.Contacts.CONTENT_URI,
                         ce.cid

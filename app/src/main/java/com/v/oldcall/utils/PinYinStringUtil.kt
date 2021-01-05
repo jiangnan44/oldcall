@@ -9,7 +9,8 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination
-import java.lang.StringBuilder
+import java.io.FileNotFoundException
+import java.lang.Exception
 import java.util.*
 import java.util.regex.Pattern
 
@@ -68,14 +69,19 @@ object PinYinStringUtil {
             if (c.toString().matches("[\\u4E00-\\u9FA5]+".toRegex())) {
                 try {
                     pyArray = PinyinHelper.toHanyuPinyinStringArray(c, pyFormat)
-                } catch (e: BadHanyuPinyinOutputFormatCombination) {
+                } catch (e: FileNotFoundException) {
                     e.printStackTrace()
+                    pyArray[0] = ""
+                }catch (e2:Exception){
+                    e2.printStackTrace()
+                    pyArray[0] = ""
                 }
                 sb.append(pyArray[0])
             } else {
                 sb.append(c)
             }
         }
+
 
         return sb.toString().toUpperCase(Locale.getDefault())
     }
@@ -211,7 +217,7 @@ object PinYinStringUtil {
     /**
      * @param str must be a char
      */
-     fun isNumber(str: String): Boolean {
+    fun isNumber(str: String): Boolean {
         return Pattern.compile("^[1-9]+$").matcher(str).matches()
     }
 }

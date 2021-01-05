@@ -28,4 +28,7 @@
         <item name="android:windowCloseOnTouchOutside">false</item>
     </style>
 
+    <style name="sdf" parent="Theme.MaterialComponents.Light.BottomSheetDialog"/>
+
+
 </resources>

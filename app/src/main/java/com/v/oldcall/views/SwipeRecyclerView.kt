@@ -89,10 +89,12 @@ class SwipeRecyclerView : RecyclerView {
 
                     if (view != null && mFlingView != view && view.scrollX != 0) {
                         animCloseMenu(view)//slide back the opened item
+                        return true
                     }
 
                     //NOTE!! define a view/viewGroup @+id/srv_slide_menu in your itemView
                     val menuView = mFlingView?.findViewById<View>(R.id.srv_slide_menu)
+//                    val menuView = mFlingView?.getChildAt(1)
                     mMenuViewWidth = menuView?.width ?: INVALID_CHILD_WIDTH
                 }
             }

@@ -6,4 +6,105 @@
     android:layout_height="match_parent"
     tools:context=".activities.EditContactActivity">
 
+    <include layout="@layout/view_toolbar" />
+
+
+    <ImageView
+        android:id="@+id/aec_iv_avatar"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:src="@mipmap/pic_default_avatar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <TextView
+        android:id="@+id/aec_tv_modify_avatar"
+        android:layout_width="0dp"
+        android:layout_height="90dp"
+        android:background="@color/gray_3"
+        android:gravity="center"
+        android:text="@string/click_4_modify_avatar"
+        android:textColor="@color/teal_4"
+        android:textSize="@dimen/txt_30"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/aec_iv_avatar"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+
+
+    <TextView
+        android:id="@+id/aec_tv_name"
+        android:layout_width="90dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/gray_3"
+        android:gravity="center"
+        android:text="@string/edit_name"
+        android:textColor="@color/gray_9"
+        android:textSize="@dimen/txt_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/aec_iv_avatar" />
+
+    <EditText
+        android:id="@+id/aec_et_name"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/gray_3"
+        android:gravity="center_vertical|start"
+        android:hint="@string/edit_name_hint"
+        android:paddingStart="@dimen/space_10"
+        android:text="@string/edit_name"
+        android:textColor="@color/orange_7"
+        android:textColorHint="@color/teal_3"
+        android:textSize="@dimen/txt_30"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/aec_tv_name"
+        app:layout_constraintTop_toBottomOf="@id/aec_iv_avatar" />
+
+
+
+    <TextView
+        android:id="@+id/aec_tv_phone"
+        android:layout_width="90dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/gray_3"
+        android:gravity="center"
+        android:text="@string/edit_phone"
+        android:textColor="@color/gray_9"
+        android:textSize="@dimen/txt_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/aec_tv_name" />
+
+    <EditText
+        android:id="@+id/aec_et_phone"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/gray_3"
+        android:gravity="center_vertical|start"
+        android:hint="@string/edit_phone_hint"
+        android:paddingStart="@dimen/space_10"
+        android:text="1354865877"
+        android:textColor="@color/blue_5"
+        android:textColorHint="@color/teal_3"
+        android:textSize="@dimen/txt_30"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/aec_tv_phone"
+        app:layout_constraintTop_toBottomOf="@id/aec_tv_name" />
+
+
+    <Button
+        android:id="@+id/aec_btn_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/space_15"
+        android:layout_marginBottom="50dp"
+        android:text="@string/edit_save"
+        android:textSize="@dimen/txt_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

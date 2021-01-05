@@ -14,6 +14,7 @@ import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.mvps.MainContract
 import com.v.oldcall.mvps.MainPresenter
 import com.v.oldcall.utils.AvatarLoader
+import com.v.oldcall.utils.CommonUtil
 import com.v.oldcall.utils.ToastManager
 import com.v.oldcall.views.DividerDecoration
 import com.v.oldcall.views.SlideItemHelperCallback
@@ -98,7 +99,8 @@ class MainActivity : BaseMvpActivity<MainPresenter<MainContract.View>>(),
     }
 
     override fun onClick(v: View?) {
-        when (v?.id) {
+        if (null == v || CommonUtil.isFastClick(v)) return
+        when (v.id) {
             R.id.btn_to_dialler -> {
                 go2Dialler();
             }

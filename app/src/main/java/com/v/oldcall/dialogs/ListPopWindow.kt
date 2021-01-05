@@ -36,8 +36,6 @@ class ListPopWindow : PopupWindow {
 
     constructor(context: Context) : super(context) {
         this.mContext = context
-        mAdapter = ListPopAdapter(context)
-        initData()
         initView()
         setupWindow()
     }
@@ -54,6 +52,7 @@ class ListPopWindow : PopupWindow {
     }
 
     private fun initView() {
+        mAdapter = ListPopAdapter(mContext)
         with(RecyclerView(mContext)) {
             isVerticalScrollBarEnabled = false
             overScrollMode = View.OVER_SCROLL_NEVER
@@ -73,31 +72,8 @@ class ListPopWindow : PopupWindow {
         }
     }
 
-    private fun initData() {
-        with(mAdapter!!) {
-            addData(
-                ListItem(
-                    0,
-                    mContext.getString(R.string.contact_action_dial),
-                    Keys.POP_ACTION_DIAL
-                )
-            )
-            addData(
-                ListItem(
-                    0,
-                    mContext.getString(R.string.contact_action_modify_avatar),
-                    Keys.POP_ACTION_MODIFY
-                )
-            )
-            addData(
-                ListItem(
-                    0,
-                    mContext.getString(R.string.remove_contact),
-                    Keys.POP_ACTION_REMOVE
-                )
-            )
-
-        }
+    fun setData(list: List<ListItem>) {
+        mAdapter?.addData(list)
     }
 
     fun show() {

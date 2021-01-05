@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:4582775653680445508",
-      "lastPropertyId": "10:3841697562745233576",
+      "lastPropertyId": "9:6950471828221820743",
       "name": "ContactEntity",
       "properties": [
         {
@@ -55,12 +55,6 @@
           "id": "9:6950471828221820743",
           "name": "name",
           "type": 9
-        },
-        {
-          "id": "10:3841697562745233576",
-          "name": "pid",
-          "type": 6,
-          "flags": 4
         }
       ],
       "relations": []

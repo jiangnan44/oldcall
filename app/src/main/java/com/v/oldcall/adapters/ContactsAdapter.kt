@@ -34,7 +34,7 @@ class ContactsAdapter : BaseMagicAdapter<ContactEntity, ContactsAdapter.ViewHold
             } else {
                 holder.ivAvatar.visibility = View.VISIBLE
                 holder.tvAvatar.visibility = View.INVISIBLE
-                AvatarLoader.loadAvatar(it.avatar, holder.ivAvatar)
+                AvatarLoader.loadAvatar(it, holder.ivAvatar)
             }
 
             holder.tvPhone.text = it.phone

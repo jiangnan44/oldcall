@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -77,6 +79,7 @@ class AddContactsActivity : ContactsContract.View,
             val content = etSearch.text.trim().toString()
             if (!TextUtils.isEmpty(content)) {
                 mPresenter?.searchContacts(content)
+                ViewCompat.getWindowInsetsController(it)?.hide(WindowInsetsCompat.Type.ime())
             }
         }
 

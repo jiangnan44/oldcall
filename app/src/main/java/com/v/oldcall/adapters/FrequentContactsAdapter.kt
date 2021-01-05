@@ -15,6 +15,7 @@ import androidx.core.app.DialogCompat
 import androidx.core.content.ContextCompat
 import androidx.core.widget.PopupMenuCompat
 import com.v.oldcall.R
+import com.v.oldcall.activities.CallActivity
 import com.v.oldcall.constants.Keys
 import com.v.oldcall.dialogs.ListPopWindow
 import com.v.oldcall.entities.ContactEntity
@@ -32,6 +33,8 @@ class FrequentContactsAdapter : ItemTouchHelperAdapter,
     BaseMagicAdapter<ContactEntity, FrequentContactsAdapter.ViewHolder> {
 
     constructor(mContext: Context) : super(mContext, R.layout.item_contacts)
+
+    private lateinit var listItems: List<ListPopWindow.ListItem>
 
     private var listener: HandleContactListener? = null
     fun setHandleContactListener(listener: HandleContactListener) {
@@ -53,7 +56,7 @@ class FrequentContactsAdapter : ItemTouchHelperAdapter,
             } else {
                 holder.ivAvatar.visibility = View.VISIBLE
                 holder.tvAvatar.visibility = View.INVISIBLE
-                AvatarLoader.loadAvatar(avatar, holder.ivAvatar)
+                AvatarLoader.loadAvatar(this, holder.ivAvatar)
             }
 
             holder.tvPhone.text = phone
@@ -64,7 +67,7 @@ class FrequentContactsAdapter : ItemTouchHelperAdapter,
                 true
             }
             holder.itemView.setOnClickListener {
-                ToastManager.showShort(mContext, "long clicked del+$position")
+                go2Call(this)
             }
             holder.tvDel.setOnClickListener {
                 onItemDelete(position)
@@ -74,14 +77,14 @@ class FrequentContactsAdapter : ItemTouchHelperAdapter,
 
 
     private fun showPopMenu(view: View, position: Int, contact: ContactEntity) {
-
         with(ListPopWindow(mContext)) {
             anchor = view
+            setData(getPopItems())
             setListItemClickListener(object : ListPopWindow.OnListItemClickListener {
                 override fun onItemClick(action: Byte) {
                     when (action) {
                         Keys.POP_ACTION_DIAL -> {
-                            go2Call(contact.phone!!)
+                            go2Call(contact)
                         }
                         Keys.POP_ACTION_MODIFY -> {
                             go2ModifyAvatar()
@@ -98,15 +101,38 @@ class FrequentContactsAdapter : ItemTouchHelperAdapter,
 
     }
 
+
+    private fun getPopItems(): List<ListPopWindow.ListItem> {
+        if (!::listItems.isInitialized) {
+            listItems = arrayListOf(
+                ListPopWindow.ListItem(
+                    0,
+                    mContext.getString(com.v.oldcall.R.string.contact_action_dial),
+                    Keys.POP_ACTION_DIAL
+                ),
+                ListPopWindow.ListItem(
+                    0,
+                    mContext.getString(com.v.oldcall.R.string.contact_action_modify_avatar),
+                    Keys.POP_ACTION_MODIFY
+                ),
+                ListPopWindow.ListItem(
+                    0,
+                    mContext.getString(com.v.oldcall.R.string.remove_contact),
+                    Keys.POP_ACTION_REMOVE
+                )
+            )
+        }
+        return listItems
+    }
+
     private fun go2ModifyAvatar() {
         ToastManager.showShort(mContext, "modify")
     }
 
-    private fun go2Call(phone: String) {
-        mContext.startActivity(Intent().apply {
-            action = Intent.ACTION_CALL
-            data = Uri.parse("tel:$phone")
-        })
+    private fun go2Call(entity: ContactEntity) {
+        val intent = Intent(mContext, CallActivity::class.java)
+        intent.putExtra(Keys.INTENT_MAKE_CALL, entity)
+        mContext.startActivity(intent)
     }
 
     override fun getRealViewHolder(itemView: View): ViewHolder = ViewHolder(itemView)

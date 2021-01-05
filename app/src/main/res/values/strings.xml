@@ -43,5 +43,16 @@
     <string name="contact_action_dial">拨号</string>
     <string name="contact_action_modify_avatar">修改头像</string>
 
+    <string name="call_err_contact">获取联系人信息出错，请退出应用后重试!</string>
+    <string name="call_take_photo">拍 照</string>
+    <string name="call_choose_photo">相册选择</string>
+    <string name="modify_avatar_failed">修改头像失败，请退出应用后重试！</string>
+
+    <string name="click_4_modify_avatar">点击修改头像</string>
+    <string name="edit_name">姓名：</string>
+    <string name="edit_phone">电话：</string>
+    <string name="edit_name_hint">请输入姓名</string>
+    <string name="edit_phone_hint">请输入电话</string>
+    <string name="edit_save">保存修改</string>
 
 </resources>

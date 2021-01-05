@@ -1,11 +1,8 @@
 package com.v.oldcall.app
 
 import android.app.Application
-import com.v.oldcall.BuildConfig
-import com.v.oldcall.entities.MyObjectBox
 import com.v.oldcall.utils.ObjectBoxHelper
-import io.objectbox.BoxStore
-import io.objectbox.android.AndroidObjectBrowser
+import kotlin.properties.Delegates
 
 /**
  * Author:v
@@ -14,9 +11,14 @@ import io.objectbox.android.AndroidObjectBrowser
 class BaseApplication : Application() {
     val TAG = "BaseApplication"
 
+    companion object {
+        private var instance: BaseApplication by Delegates.notNull()
+        fun instance() = instance
+    }
 
     override fun onCreate() {
         super.onCreate()
+        instance = this
         initObjectBox()
     }
 
