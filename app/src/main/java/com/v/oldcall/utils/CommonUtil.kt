@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.TypedValue
 import android.view.View
 import com.v.oldcall.R
+import java.util.regex.Pattern
 import kotlin.random.Random
 
 /**
@@ -40,6 +41,11 @@ class CommonUtil {
                 sp,
                 context.resources.displayMetrics
             )
+        }
+
+
+        fun isPhone(str: String): Boolean {
+            return Pattern.compile("^1\\d{10}$").matcher(str).matches()
         }
 
 

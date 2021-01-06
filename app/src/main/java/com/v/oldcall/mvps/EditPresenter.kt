@@ -1,20 +1,18 @@
 package com.v.oldcall.mvps
 
+import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import com.v.oldcall.activities.CallActivity
 import com.v.oldcall.app.BaseApplication
 import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.utils.FileUtil
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileNotFoundException
@@ -45,15 +43,33 @@ class EditPresenter<V : EditContract.View> : EditContract.Presenter<V, EditModel
     ) {
         mView?.showLoading()
         startCoroutine {
-            mModel?.let {
-                val ret = it.updateInfo(name, phone, srcBitmap, contact)
+            val ret = async {
+                mModel?.run {
+                    val n = if (name == contact.name) {
+                        ""
+                    } else {
+                        contact.name = name
+                        name
+                    }
+
+                    val p = if (phone == contact.phone) {
+                        ""
+                    } else {
+                        contact.phone = phone
+                        phone
+                    }
+                    updateInfo(n!!, p!!, srcBitmap, contact)
+                }
+            }
+            ret.await().let {
                 mView?.dismissLoading()
-                mView?.saveInfoEnd(ret)
+                mView?.onSaveInfoEnd(it ?: false)
             }
         }
     }
 
-    override fun cropRawPhoto(srcUri: Uri, requestCode: Int) {
+    fun cropRawPhoto(srcUri: Uri, requestCode: Int) {
+        Log.w("EditContactActivity","cropRawPhoto")
         val tempPicture = File(
             FileUtil.getAppPictureCacheDir(BaseApplication.instance()),
             TEMP_CROP_FILE_NAME
@@ -77,14 +93,24 @@ class EditPresenter<V : EditContract.View> : EditContract.Presenter<V, EditModel
         (mView as Activity?)?.startActivityForResult(intent, requestCode)
     }
 
-    override fun chooseAvatarFromGallery(requestCode: Int) {
+    fun requestCameraPermission(requestCode: Int) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            (mView as Activity?)?.requestPermissions(
+                arrayOf(Manifest.permission.CAMERA),
+                requestCode
+            )
+        }
+    }
+
+
+    fun chooseAvatarFromGallery(requestCode: Int) {
         (mView as Activity?)?.startActivityForResult(Intent().also {
             it.action = Intent.ACTION_PICK
             it.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, TYPE_IMAGE)
         }, requestCode)
     }
 
-    override fun openCamera(requestCode: Int) {
+    fun openCamera(requestCode: Int) {
         val intentCamera = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         val tempPicture = File(
             FileUtil.getAppPictureCacheDir(BaseApplication.instance()),

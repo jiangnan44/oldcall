@@ -97,9 +97,7 @@ class CallActivity : BaseActivity(), View.OnLongClickListener {
     override fun onLongClick(v: View?): Boolean {
         when (v?.id) {
             R.id.ac_tv_avatar,
-            R.id.ac_iv_avatar -> {
-                showModifyAvatarDialog()
-            }
+            R.id.ac_iv_avatar,
             R.id.ac_tv_name,
             R.id.ac_tv_phone -> {
                 go2EditContact()

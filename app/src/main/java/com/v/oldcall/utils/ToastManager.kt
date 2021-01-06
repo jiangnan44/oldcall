@@ -10,7 +10,7 @@ class ToastManager private constructor(context: Context) {
 
     init {
         if (null == mToast) {
-            mToast = Toast.makeText(context, "", Toast.LENGTH_LONG)
+            mToast = Toast.makeText(context.applicationContext, "", Toast.LENGTH_LONG)
         }
     }
 
@@ -60,25 +60,25 @@ class ToastManager private constructor(context: Context) {
 
         fun getInstance(context: Context): ToastManager? {
             if (null == mToastManager) {
-                mToastManager = ToastManager(context)
+                mToastManager = ToastManager(context.applicationContext)
             }
             return mToastManager
         }
 
         fun showLong(context: Context?, text: String?) {
-            Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+            Toast.makeText(context?.applicationContext, text, Toast.LENGTH_LONG).show()
         }
 
         fun showLong(context: Context?, textID: Int) {
-            Toast.makeText(context, textID, Toast.LENGTH_LONG).show()
+            Toast.makeText(context?.applicationContext, textID, Toast.LENGTH_LONG).show()
         }
 
         fun showShort(context: Context?, text: String?) {
-            Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context?.applicationContext, text, Toast.LENGTH_SHORT).show()
         }
 
         fun showShort(context: Context?, textID: Int) {
-            Toast.makeText(context, textID, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context?.applicationContext, textID, Toast.LENGTH_SHORT).show()
         }
     }
 
