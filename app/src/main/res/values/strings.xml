@@ -55,7 +55,9 @@
     <string name="edit_phone_hint">请输入电话</string>
     <string name="edit_save">保存修改</string>
     <string name="edit_save_success">保存成功！</string>
-    <string name="edit_save_failed">保存失败！请稍后重试</string>
+    <string name="edit_save_failed">保存失败</string>
+    <string name="edit_go2_system_contact">您可以选择去【系统联系人】界面编辑该联系人，但需要退出本应用，并重新添加该联系人到 常用联系人列表</string>
+    <string name="edit_go2_edit">去编辑</string>
     <string name="edit_hint_must_number">手机必须是数字</string>
     <string name="edit_hint_empty_name">姓名不能为空</string>
     <string name="edit_hint_empty_phone">手机不能为空</string>

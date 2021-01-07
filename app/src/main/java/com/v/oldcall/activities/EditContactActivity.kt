@@ -3,6 +3,8 @@ package com.v.oldcall.activities
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.net.Uri
+import android.provider.ContactsContract
 import android.util.Log
 import android.view.View
 import android.widget.EditText
@@ -12,10 +14,13 @@ import androidx.core.content.ContextCompat
 import com.v.oldcall.R
 import com.v.oldcall.constants.Keys
 import com.v.oldcall.dialogs.BottomListDialog
+import com.v.oldcall.dialogs.DecisionDialog
 import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.mvps.EditContract
 import com.v.oldcall.mvps.EditPresenter
 import com.v.oldcall.utils.*
+import java.lang.Exception
+
 
 class EditContactActivity : BaseMvpActivity<EditPresenter<EditContract.View>>(),
     EditContract.View, View.OnClickListener {
@@ -96,18 +101,56 @@ class EditContactActivity : BaseMvpActivity<EditPresenter<EditContract.View>>(),
     }
 
     override fun onSaveInfoEnd(success: Boolean) {
-
         if (success) {
             ToastManager.showShort(this, R.string.edit_save_success)
+            updateDbData()
+            finish()
         } else {
-            ToastManager.showShort(this, R.string.edit_save_failed)
+            showFailedDialog()
         }
 
-        val ret = ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).get(mContact.id)
-        Log.w(TAG, "onSaveInfoEnd,new data=$ret")
-//        finish()
     }
 
+    private fun updateDbData() {
+        val ret = ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).get(mContact.id)
+        Log.w(TAG, "onSaveInfoEnd,new data=$ret")
+
+    }
+
+
+    private fun showFailedDialog() {
+        DecisionDialog.Builder(this)
+            .withCancelOnBack(false)
+            .withCancelOutside(false)
+            .withTitle(getString(R.string.edit_save_failed))
+            .withContent(getString(R.string.edit_go2_system_contact))
+            .withLeftText(getString(R.string.cancel))
+            .withRightText(getString(R.string.edit_go2_edit))
+            .withLeftListener {
+                finish()
+            }
+            .withRightListener {
+                go2EditContact()
+                removeContactAndExitApp()
+            }
+            .build().show()
+    }
+
+
+    private fun go2EditContact() {
+        startActivity(Intent().also {
+            it.action = Intent.ACTION_EDIT
+            it.data = Uri.withAppendedPath(
+                ContactsContract.Contacts.CONTENT_URI,
+                mContact.cid.toString()
+            )
+        })
+
+    }
+
+    private fun removeContactAndExitApp() {
+
+    }
 
     override fun onCropPhotoDecoded(photo: Bitmap?) {
         if (photo == null) {
@@ -156,7 +199,6 @@ class EditContactActivity : BaseMvpActivity<EditPresenter<EditContract.View>>(),
                 if (!hasChanged()) {
                     return
                 }
-
 
                 mPresenter?.saveInfo(
                     etName.text.toString(),

@@ -175,16 +175,12 @@ class PermissionCheckActivity : AppCompatActivity() {
             .withCancelOnBack(false)
             .withLeftText(res.getString(R.string.cancel))
             .withRightText(res.getString(R.string.go_check))
-            .withLeftListener(object : DecisionDialog.DialogClickListener {
-                override fun onClick(dialog: Dialog) {
-                    showRecheckDialog(permission)
-                }
-            })
-            .withRightListener(object : DecisionDialog.DialogClickListener {
-                override fun onClick(dialog: Dialog) {
-                    checkPermissions()
-                }
-            })
+            .withLeftListener {
+                showRecheckDialog(permission)
+            }
+            .withRightListener {
+                checkPermissions()
+            }
             .build()
             .show()
     }
@@ -200,16 +196,12 @@ class PermissionCheckActivity : AppCompatActivity() {
             .withRightText(res.getString(R.string.go_setting))
             .withCancelOutside(false)
             .withCancelOnBack(false)
-            .withLeftListener(object : DecisionDialog.DialogClickListener {
-                override fun onClick(dialog: Dialog) {
-                    finish()
-                }
-            })
-            .withRightListener(object : DecisionDialog.DialogClickListener {
-                override fun onClick(dialog: Dialog) {
-                    go2Setting()
-                }
-            })
+            .withLeftListener {
+                finish()
+            }
+            .withRightListener {
+                go2Setting()
+            }
             .build()
             .show()
     }
@@ -227,16 +219,12 @@ class PermissionCheckActivity : AppCompatActivity() {
             .withRightText(res.getString(R.string.go_check))
             .withCancelOnBack(false)
             .withCancelOutside(false)
-            .withLeftListener(object : DecisionDialog.DialogClickListener {
-                override fun onClick(dialog: Dialog) {
-                    finish()
-                }
-            })
-            .withRightListener(object : DecisionDialog.DialogClickListener {
-                override fun onClick(dialog: Dialog) {
-                    checkPermissions()
-                }
-            })
+            .withLeftListener {
+                finish()
+            }
+            .withRightListener {
+                checkPermissions()
+            }
             .build()
             .show()
     }
@@ -260,16 +248,12 @@ class PermissionCheckActivity : AppCompatActivity() {
             .withRightText(res.getString(R.string.go_setting))
             .withCancelOutside(false)
             .withCancelOnBack(false)
-            .withLeftListener(object : DecisionDialog.DialogClickListener {
-                override fun onClick(dialog: Dialog) {
-                    finish()
-                }
-            })
-            .withRightListener(object : DecisionDialog.DialogClickListener {
-                override fun onClick(dialog: Dialog) {
-                    go2Setting()
-                }
-            })
+            .withLeftListener {
+                finish()
+            }
+            .withRightListener {
+                go2Setting()
+            }
             .build()
             .show()
     }

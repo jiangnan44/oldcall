@@ -146,13 +146,25 @@ class DecisionDialog(builder: Builder) : Dialog(builder.mContext!!, builder.mThe
             return this
         }
 
-        fun withLeftListener(listener: DialogClickListener): Builder {
-            leftListener = listener
+
+
+        fun withLeftListener(action: (Dialog) -> Unit): Builder {
+            leftListener = object : DialogClickListener {
+                override fun onClick(dialog: Dialog) {
+                    action(dialog)
+                }
+            }
             return this
         }
 
-        fun withRightListener(listener: DialogClickListener): Builder {
-            rightListener = listener
+
+
+        fun withRightListener(action: (Dialog) -> Unit): Builder {
+            rightListener = object : DialogClickListener {
+                override fun onClick(dialog: Dialog) {
+                    action(dialog)
+                }
+            }
             return this
         }
 

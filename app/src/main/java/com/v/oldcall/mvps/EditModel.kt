@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.lang.Exception
 
 /**
  * Author:v
@@ -48,34 +49,46 @@ class EditModel : EditContract.Model {
         }
 
         val values = ContentValues()
+        val where =
+            ContactsContract.Data.MIMETYPE + " = ? and " + ContactsContract.Data.RAW_CONTACT_ID + " = ? "
 
-        var r1 = 0
-        if (name.isNotEmpty()) {
+        val r1 = if (name.isNotEmpty()) {
             values.put(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, name)
-            r1 = BaseApplication.instance().contentResolver.update(
-                ContactsContract.Data.CONTENT_URI,
-                values,
-                ContactsContract.RawContacts.Data.MIMETYPE + " =? and raw_contact_id = ? ",
-                arrayOf(
-                    ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
-                    contact.cid.toString()
-                )
+            val param = arrayOf(
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+                contact.cid.toString()
             )
+            try {
+                BaseApplication.instance().contentResolver.update(
+                    ContactsContract.Data.CONTENT_URI, values, where, param
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                0
+            }
+        } else {
+            1
         }
 
-        var r2 = 0
-        if (phone.isNotEmpty()) {
+        val r2 = if (phone.isNotEmpty()) {
             values.clear()
             values.put(ContactsContract.CommonDataKinds.Phone.NUMBER, phone)
-            r2 = BaseApplication.instance().contentResolver.update(
-                ContactsContract.Data.CONTENT_URI,
-                values,
-                ContactsContract.RawContacts.Data.MIMETYPE + " =? and raw_contact_id = ? ",
-                arrayOf(
-                    ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
-                    contact.cid.toString()
+            try {
+                BaseApplication.instance().contentResolver.update(
+                    ContactsContract.Data.CONTENT_URI,
+                    values,
+                    where,
+                    arrayOf(
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                        contact.cid.toString()
+                    )
                 )
-            )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                0
+            }
+        } else {
+            1
         }
         return r1 > 0 && r2 > 0
     }
@@ -94,7 +107,7 @@ class EditModel : EditContract.Model {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        Log.w("vvv", "success avatar= ${contact.avatar}")
+        Log.w("EditContactActivity", "success avatar= ${contact.avatar}")
         if (!success) return false
         val ret = ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).put(contact)
         return ret > 0
