@@ -1,8 +1,6 @@
 package com.v.oldcall.utils
 
 import com.v.oldcall.entities.ContactEntity
-import net.sourceforge.pinyin4j.PinyinHelper
-import java.util.regex.Pattern
 
 /**
  * Author:v

@@ -7,7 +7,7 @@
     <item
         android:id="@+id/m_modify_avatar"
         android:icon="@mipmap/ic_launcher"
-        android:title="@string/contact_action_modify_avatar" />
+        android:title="@string/contact_action_modify_info" />
     <item
         android:id="@+id/m_remove"
         android:icon="@mipmap/ic_launcher"

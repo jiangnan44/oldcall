@@ -5,15 +5,15 @@ import android.content.ContentValues
 import android.graphics.Bitmap
 import android.provider.ContactsContract
 import android.util.Log
-import com.v.oldcall.app.BaseApplication
+import com.v.oldcall.app.App
 import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.utils.FileUtil
 import com.v.oldcall.utils.ObjectBoxHelper
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.lang.Exception
 
 /**
  * Author:v
@@ -26,15 +26,11 @@ class EditModel : EditContract.Model {
         phone: String,
         srcBitmap: Bitmap?,
         contact: ContactEntity
-    ): Boolean {
-        val r1: Boolean
-        val r2: Boolean
-        withContext(Dispatchers.IO) {
-            r1 = savePhoto(srcBitmap, contact)
-            r2 = updateSystemContact(name, phone, contact)
-        }
+    ): Boolean = withContext(Dispatchers.IO) {
+        val r1 = async { savePhoto(srcBitmap, contact) }
+        val r2 = async { updateSystemContact(name, phone, contact) }
 
-        return r1 && r2
+        r1.await() && r2.await()
     }
 
 
@@ -42,10 +38,10 @@ class EditModel : EditContract.Model {
         name: String,
         phone: String,
         contact: ContactEntity
-    ): Boolean {
+    ): Boolean = withContext(Dispatchers.IO) {
 
         if (name.isEmpty() && phone.isEmpty()) {
-            return true
+            return@withContext true
         }
 
         val values = ContentValues()
@@ -59,7 +55,7 @@ class EditModel : EditContract.Model {
                 contact.cid.toString()
             )
             try {
-                BaseApplication.instance().contentResolver.update(
+                App.instance().contentResolver.update(
                     ContactsContract.Data.CONTENT_URI, values, where, param
                 )
             } catch (e: Exception) {
@@ -74,7 +70,7 @@ class EditModel : EditContract.Model {
             values.clear()
             values.put(ContactsContract.CommonDataKinds.Phone.NUMBER, phone)
             try {
-                BaseApplication.instance().contentResolver.update(
+                App.instance().contentResolver.update(
                     ContactsContract.Data.CONTENT_URI,
                     values,
                     where,
@@ -90,28 +86,29 @@ class EditModel : EditContract.Model {
         } else {
             1
         }
-        return r1 > 0 && r2 > 0
+        r1 > 0 && r2 > 0
     }
 
 
-    private suspend fun savePhoto(srcBitmap: Bitmap?, contact: ContactEntity): Boolean {
-        if (srcBitmap == null) return true
+    private suspend fun savePhoto(srcBitmap: Bitmap?, contact: ContactEntity): Boolean =
+        withContext(Dispatchers.IO) {
+            if (srcBitmap == null) return@withContext true
 
-        val os = ByteArrayOutputStream()
-        srcBitmap.compress(Bitmap.CompressFormat.JPEG, 100, os)
-        val avatar = os.toByteArray()
+            val os = ByteArrayOutputStream()
+            srcBitmap.compress(Bitmap.CompressFormat.JPEG, 100, os)
+            val avatar = os.toByteArray()
 
-        val success = savePhoto2ContactAndDir(avatar, contact)
-        try {
-            os.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
+            val success = savePhoto2ContactAndDir(avatar, contact)
+            try {
+                os.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            Log.d("EditContactActivity", "success avatar= ${contact.avatar}")
+            if (!success) return@withContext false
+            val ret = ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).put(contact)
+            ret > 0
         }
-        Log.w("EditContactActivity", "success avatar= ${contact.avatar}")
-        if (!success) return false
-        val ret = ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).put(contact)
-        return ret > 0
-    }
 
     private fun savePhoto2ContactAndDir(
         avatar: ByteArray,
@@ -121,7 +118,7 @@ class EditModel : EditContract.Model {
         if (contact.pid > 0) {
             values.put(ContactsContract.CommonDataKinds.Photo.PHOTO, avatar)
 
-            val ret = BaseApplication.instance().contentResolver.update(
+            val ret = App.instance().contentResolver.update(
                 ContactsContract.Data.CONTENT_URI,
                 values,
                 ContactsContract.RawContacts.Data.MIMETYPE + " =? AND " + ContactsContract.RawContacts.Data.RAW_CONTACT_ID + " = " + contact.cid,
@@ -132,7 +129,7 @@ class EditModel : EditContract.Model {
                 return false
             }
 
-            return FileUtil.saveBitmap2File(BaseApplication.instance(), avatar, contact.phone)
+            return FileUtil.saveBitmap2File(App.instance(), avatar, contact.phone)
 
         } else {
             values.also {
@@ -144,7 +141,7 @@ class EditModel : EditContract.Model {
                 it.put(ContactsContract.CommonDataKinds.Photo.PHOTO, avatar)
             }
 
-            BaseApplication.instance().contentResolver.insert(
+            App.instance().contentResolver.insert(
                 ContactsContract.Data.CONTENT_URI,
                 values
             ) ?: return false
@@ -154,7 +151,7 @@ class EditModel : EditContract.Model {
                 contact.cid
             ).toString()
             contact.avatar = temp
-            return FileUtil.saveBitmap2File(BaseApplication.instance(), avatar, contact.phone)
+            return FileUtil.saveBitmap2File(App.instance(), avatar, contact.phone)
         }
     }
 

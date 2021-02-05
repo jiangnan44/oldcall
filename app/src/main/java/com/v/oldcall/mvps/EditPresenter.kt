@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import com.v.oldcall.app.App
 import com.v.oldcall.app.BaseApplication
 import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.utils.FileUtil
@@ -69,9 +70,9 @@ class EditPresenter<V : EditContract.View> : EditContract.Presenter<V, EditModel
     }
 
     fun cropRawPhoto(srcUri: Uri, requestCode: Int) {
-        Log.w("EditContactActivity","cropRawPhoto")
+        Log.d("EditContactActivity", "cropRawPhoto")
         val tempPicture = File(
-            FileUtil.getAppPictureCacheDir(BaseApplication.instance()),
+            FileUtil.getAppPictureCacheDir(App.instance()),
             TEMP_CROP_FILE_NAME
         )
         cropUri = FileUtil.getFileUri(tempPicture)
@@ -113,11 +114,11 @@ class EditPresenter<V : EditContract.View> : EditContract.Presenter<V, EditModel
     fun openCamera(requestCode: Int) {
         val intentCamera = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         val tempPicture = File(
-            FileUtil.getAppPictureCacheDir(BaseApplication.instance()),
+            FileUtil.getAppPictureCacheDir(App.instance()),
             TEMP_AVATAR_FILE_NAME
         )
 
-        avatarUri = FileUtil.getProviderFileUri(BaseApplication.instance(), tempPicture)
+        avatarUri = FileUtil.getProviderFileUri(App.instance(), tempPicture)
         intentCamera.putExtra(
             MediaStore.EXTRA_OUTPUT,
             avatarUri
@@ -132,7 +133,7 @@ class EditPresenter<V : EditContract.View> : EditContract.Presenter<V, EditModel
                 var bitmap: Bitmap? = null
                 try {
                     bitmap = BitmapFactory.decodeStream(
-                        BaseApplication.instance().contentResolver.openInputStream(it)
+                        App.instance().contentResolver.openInputStream(it)
                     )
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()

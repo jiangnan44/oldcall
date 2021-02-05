@@ -18,7 +18,7 @@ class EditContract {
     }
 
     interface View : BaseContract.BaseView {
-        fun onSaveInfoEnd(ret: Boolean)
+        fun onSaveInfoEnd(success: Boolean)
         fun onCropPhotoDecoded(photo: Bitmap?)
     }
 

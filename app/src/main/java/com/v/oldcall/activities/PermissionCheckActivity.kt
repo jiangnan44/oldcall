@@ -55,7 +55,7 @@ class PermissionCheckActivity : AppCompatActivity() {
         var noDialogShowed = true
         for (permission in permissions) {
             if (shouldShowRequestPermissionRationale(permission)) {
-                Log.w(TAG, "show shouldShowRequestPermission")
+                Log.d(TAG, "show shouldShowRequestPermission")
                 showRationalDialog(permission)
                 noDialogShowed = false
                 break
@@ -63,13 +63,13 @@ class PermissionCheckActivity : AppCompatActivity() {
         }
 
         if (noDialogShowed) {
-            Log.w(TAG, " noDialogShowed")
+            Log.d(TAG, " noDialogShowed")
             checkPermissions()
         }
     }
 
     private fun checkPermissions() {
-        Log.w(TAG, "checkPermissions")
+        Log.d(TAG, "checkPermissions")
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return
@@ -88,7 +88,7 @@ class PermissionCheckActivity : AppCompatActivity() {
         permissions.removeAll(tmp)
 
         if (permissions.size == 0) {
-            Log.w(TAG, "check success")
+            Log.d(TAG, "check success")
             checkSuccess()
         } else {
             if (isFromResult) {
@@ -102,7 +102,7 @@ class PermissionCheckActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun requestPermission() {
-        Log.w(TAG, "request permission")
+        Log.d(TAG, "request permission")
         val permissionList = Array<String>(permissions.size) { "" }
         for (i in 0 until permissions.size) {
             permissionList[i] = permissions[i]
@@ -133,12 +133,12 @@ class PermissionCheckActivity : AppCompatActivity() {
                 }
             }
         }
-        Log.w(TAG, "onRequestPermissionsResult:grantResults.size=" + grantResults.size)
+        Log.d(TAG, "onRequestPermissionsResult:grantResults.size=" + grantResults.size)
 
         if (deniedPermissions.size > 0) {
             showGoSettingDialog(deniedPermissions)
         } else {
-            Log.w(TAG, "checkSuccess")
+            Log.d(TAG, "checkSuccess")
             checkSuccess()
         }
 
@@ -187,7 +187,7 @@ class PermissionCheckActivity : AppCompatActivity() {
 
 
     private fun showLastWarningDialog() {
-        Log.w(TAG, "showLastWarningDialog")
+        Log.d(TAG, "showLastWarningDialog")
         val res = resources
         DecisionDialog.Builder(this)
             .withTitle(res.getString(R.string.title_crying_warning))
@@ -207,7 +207,7 @@ class PermissionCheckActivity : AppCompatActivity() {
     }
 
     private fun showRecheckDialog(permission: String) {
-        Log.w(TAG, "showRecheckDialog")
+        Log.d(TAG, "showRecheckDialog")
         val res = resources
         val request =
             String.format(res.getString(R.string.content_recheck), getPermissionString(permission))
@@ -230,7 +230,7 @@ class PermissionCheckActivity : AppCompatActivity() {
     }
 
     private fun showGoSettingDialog(permissions: ArrayList<String>) {
-        Log.w(TAG, "handleDenied")
+        Log.d(TAG, "handleDenied")
         val res = resources
         var request: String = ""
         for (p in permissions) {

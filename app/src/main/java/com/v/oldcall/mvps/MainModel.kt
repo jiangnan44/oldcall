@@ -37,7 +37,7 @@ class MainModel : MainContract.Model {
     }
 
     override fun destroy() {
-        TODO("Not yet implemented")
+       //nothing todo
     }
 
 }

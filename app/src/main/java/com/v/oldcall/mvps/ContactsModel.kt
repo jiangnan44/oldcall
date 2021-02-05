@@ -26,90 +26,93 @@ class ContactsModel : ContactsContract.Model {
     private var cacheList: MutableList<ContactEntity>? = ArrayList()
 
 
-    override suspend fun getContacts(context: Context?): List<ContactEntity>? {
-        if (context == null) return null
+    override suspend fun getContacts(context: Context?): List<ContactEntity>? =
+        withContext(Dispatchers.IO) {
 
-        if (cacheList!!.size > 0) {
-            return cacheList
+            if (context == null) return@withContext null
+
+            if (cacheList!!.size > 0) {
+                return@withContext cacheList
+            }
+
+            val frequentList =
+                ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).query().build().find()
+
+            val list: ArrayList<ContactEntity> = ArrayList()
+            val cr = context.contentResolver
+            val cursor = cr.query(uri, arrayOf(rid, photo, phone, name), null, null, null)
+            cursor?.let {
+                val indexName = it.getColumnIndex(name)
+                val indexPhone = it.getColumnIndex(phone)
+                val indexPhoto = it.getColumnIndex(photo)
+                val indexId = it.getColumnIndex(rid)
+
+                while (it.moveToNext()) {
+                    val ce = ContactEntity()
+                    ce.name = it.getString(indexName)
+                    ce.phone = it.getString(indexPhone)
+                    ce.cid = it.getLong(indexId)
+                    ce.pid = it.getLong(indexPhoto)
+                    if (ce.pid > 0) {
+                        ce.avatar = ContentUris.withAppendedId(
+                            android.provider.ContactsContract.Contacts.CONTENT_URI,
+                            ce.cid
+                        ).toString()
+                    }
+
+                    for (item in frequentList) {
+                        if (ce.phone == item.phone) {
+                            ce.isFrequent = true
+                            ce.id = item.id
+                            break
+                        }
+                    }
+
+                    list.add(ce)
+                }
+                it.close()
+            }
+            if (list.isNotEmpty()) {
+                Collections.sort(list, ContactComparator())
+            }
+            cacheList!!.addAll(list)
+            return@withContext list
         }
 
-        val frequentList =
-            ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).query().build().find()
+    override suspend fun searchContacts(key: String): List<ContactEntity>? =
+        withContext(Dispatchers.Default) {
 
-        val list: ArrayList<ContactEntity> = ArrayList()
-        val cr = context.contentResolver
-        val cursor = cr.query(uri, arrayOf(rid, photo, phone, name), null, null, null)
-        cursor?.let {
-            val indexName = it.getColumnIndex(name)
-            val indexPhone = it.getColumnIndex(phone)
-            val indexPhoto = it.getColumnIndex(photo)
-            val indexId = it.getColumnIndex(rid)
-
-            while (it.moveToNext()) {
-                val ce = ContactEntity()
-                ce.name = it.getString(indexName)
-                ce.phone = it.getString(indexPhone)
-                ce.cid = it.getLong(indexId)
-                ce.pid = it.getLong(indexPhoto)
-                if (ce.pid > 0) {
-                    ce.avatar = ContentUris.withAppendedId(
-                        android.provider.ContactsContract.Contacts.CONTENT_URI,
-                        ce.cid
-                    ).toString()
-                }
-
-                for (item in frequentList) {
-                    if (ce.phone == item.phone) {
-                        ce.isFrequent = true
-                        ce.id = item.id
-                        break
+            val results: MutableList<ContactEntity> = ArrayList()
+            val patten = Pattern.quote(key)
+            val pattern = Pattern.compile(patten, Pattern.CASE_INSENSITIVE)
+            cacheList?.let {
+                for (item in it) {
+                    val matcherWord = pattern.matcher(item.alpha)
+                    val matcherPy = pattern.matcher(item.pinyin)
+                    val matcherPhone = pattern.matcher(item.phone)
+                    val matcherName = pattern.matcher(item.name)
+                    if (matcherWord.find() || matcherPy.find() || matcherName.find() || matcherPhone.find()) {
+                        results.add(item)
                     }
                 }
 
-                list.add(ce)
             }
-            it.close()
+            results
         }
-        if (list.isNotEmpty()) {
-            Collections.sort(list, ContactComparator())
-        }
-        cacheList!!.addAll(list)
-        return list
-    }
-
-    override suspend fun searchContacts(key: String): List<ContactEntity>? {
-        val results: MutableList<ContactEntity> = ArrayList()
-        val patten = Pattern.quote(key)
-        val pattern = Pattern.compile(patten, Pattern.CASE_INSENSITIVE)
-        cacheList?.let {
-            for (item in it) {
-                val matcherWord = pattern.matcher(item.alpha)
-                val matcherPy = pattern.matcher(item.pinyin)
-                val matcherPhone = pattern.matcher(item.phone)
-                val matcherName = pattern.matcher(item.name)
-                if (matcherWord.find() || matcherPy.find() || matcherName.find() || matcherPhone.find()) {
-                    results.add(item)
-                }
-            }
-
-        }
-        return results
-    }
 
     /**
      * no need database at all ,here is just a example demo
      */
-    override suspend fun add2FrequentContacts(contact: ContactEntity): Boolean {
-        if (contact.isFrequent || contact.name.isNullOrBlank()) {
-            return false
-        }
-        var ret = -1L
+    override suspend fun add2FrequentContacts(contact: ContactEntity): Boolean =
         withContext(Dispatchers.IO) {
+            if (contact.isFrequent || contact.name.isNullOrBlank()) {
+                return@withContext false
+            }
+            var ret = -1L
             contact.isFrequent = true
             ret = ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).put(contact)
+            return@withContext ret >= 0
         }
-        return ret >= 0
-    }
 
     override suspend fun removeFrequentContacts(contact: ContactEntity): Boolean {
         if (!contact.isFrequent || contact.name.isNullOrBlank()) {

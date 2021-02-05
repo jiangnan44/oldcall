@@ -2,20 +2,15 @@ package com.v.oldcall.adapters
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.text.TextUtils
-import android.view.MenuItem
 import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.ListPopupWindow
-import androidx.appcompat.widget.PopupMenu
-import androidx.core.app.DialogCompat
 import androidx.core.content.ContextCompat
-import androidx.core.widget.PopupMenuCompat
 import com.v.oldcall.R
 import com.v.oldcall.activities.CallActivity
+import com.v.oldcall.activities.EditContactActivity
 import com.v.oldcall.constants.Keys
 import com.v.oldcall.dialogs.ListPopWindow
 import com.v.oldcall.entities.ContactEntity
@@ -87,7 +82,7 @@ class FrequentContactsAdapter : ItemTouchHelperAdapter,
                             go2Call(contact)
                         }
                         Keys.POP_ACTION_MODIFY -> {
-                            go2ModifyAvatar()
+                            listener?.modifyContact(contact, position)
                         }
                         Keys.POP_ACTION_REMOVE -> {
                             onItemDelete(position)
@@ -112,7 +107,7 @@ class FrequentContactsAdapter : ItemTouchHelperAdapter,
                 ),
                 ListPopWindow.ListItem(
                     0,
-                    mContext.getString(com.v.oldcall.R.string.contact_action_modify_avatar),
+                    mContext.getString(com.v.oldcall.R.string.contact_action_modify_info),
                     Keys.POP_ACTION_MODIFY
                 ),
                 ListPopWindow.ListItem(
@@ -125,9 +120,6 @@ class FrequentContactsAdapter : ItemTouchHelperAdapter,
         return listItems
     }
 
-    private fun go2ModifyAvatar() {
-        ToastManager.showShort(mContext, "modify")
-    }
 
     private fun go2Call(entity: ContactEntity) {
         val intent = Intent(mContext, CallActivity::class.java)
@@ -163,6 +155,7 @@ class FrequentContactsAdapter : ItemTouchHelperAdapter,
 
     interface HandleContactListener {
         fun removeContact(contact: ContactEntity, position: Int)
+        fun modifyContact(contact: ContactEntity, position: Int)
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {

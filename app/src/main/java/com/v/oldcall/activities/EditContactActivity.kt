@@ -12,6 +12,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.v.oldcall.R
+import com.v.oldcall.app.App
+import com.v.oldcall.app.BaseApplication
 import com.v.oldcall.constants.Keys
 import com.v.oldcall.dialogs.BottomListDialog
 import com.v.oldcall.dialogs.DecisionDialog
@@ -19,7 +21,6 @@ import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.mvps.EditContract
 import com.v.oldcall.mvps.EditPresenter
 import com.v.oldcall.utils.*
-import java.lang.Exception
 
 
 class EditContactActivity : BaseMvpActivity<EditPresenter<EditContract.View>>(),
@@ -40,8 +41,10 @@ class EditContactActivity : BaseMvpActivity<EditPresenter<EditContract.View>>(),
 
     private var chooseModifyDialog: BottomListDialog? = null
     private lateinit var mContact: ContactEntity
+    private lateinit var originPhone: String
     private var mPhoto: Bitmap? = null
     private var hasModifyAvatar = false
+    private var hasAvatarBefore = true
 
 
     override fun initPresenter() {
@@ -75,7 +78,9 @@ class EditContactActivity : BaseMvpActivity<EditPresenter<EditContract.View>>(),
             return
         }
         mContact = tmp
-        Log.w(TAG, "data is:$mContact")
+        hasAvatarBefore = mContact.avatar != null
+        originPhone = mContact.phone!!
+        Log.d(TAG, "data is:$mContact")
         updateView()
     }
 
@@ -84,7 +89,7 @@ class EditContactActivity : BaseMvpActivity<EditPresenter<EditContract.View>>(),
             ivAvatar.visibility = View.INVISIBLE
             tvAvatar.let {
                 it.visibility = View.VISIBLE
-                it.text = mContact.name
+                it.text = mContact.name!!.last().toString()
                 it.setBackgroundColor(
                     ContextCompat.getColor(
                         this,
@@ -103,18 +108,24 @@ class EditContactActivity : BaseMvpActivity<EditPresenter<EditContract.View>>(),
     override fun onSaveInfoEnd(success: Boolean) {
         if (success) {
             ToastManager.showShort(this, R.string.edit_save_success)
-            updateDbData()
-            finish()
+            setResult()
         } else {
             showFailedDialog()
         }
 
     }
 
-    private fun updateDbData() {
-        val ret = ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).get(mContact.id)
-        Log.w(TAG, "onSaveInfoEnd,new data=$ret")
+    private fun setResult() {
+        if (hasAvatarBefore) {
+            AvatarLoader.removeAvatarCache(originPhone)
+        }
+        setResult(RESULT_OK, Intent().also {
+            //the mContact has been modified in Model
+            it.putExtra(Keys.INTENT_EDIT_RESULT, mContact)
+            it.putExtra(Keys.INTENT_EDIT_CHANGE, true)
+        })
 
+        finish()
     }
 
 
@@ -145,11 +156,11 @@ class EditContactActivity : BaseMvpActivity<EditPresenter<EditContract.View>>(),
                 mContact.cid.toString()
             )
         })
-
     }
 
     private fun removeContactAndExitApp() {
-
+        ObjectBoxHelper.boxStore.boxFor(ContactEntity::class.java).remove(mContact)
+        App.instance().exitApp()
     }
 
     override fun onCropPhotoDecoded(photo: Bitmap?) {
@@ -209,6 +220,7 @@ class EditContactActivity : BaseMvpActivity<EditPresenter<EditContract.View>>(),
             }
 
             R.id.aec_iv_avatar,
+            R.id.aec_tv_avatar,
             R.id.aec_tv_modify_avatar -> {
                 showModifyAvatarDialog()
             }
@@ -218,7 +230,7 @@ class EditContactActivity : BaseMvpActivity<EditPresenter<EditContract.View>>(),
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.w(TAG, "onActivityResult")
+        Log.d(TAG, "onActivityResult")
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == RESULT_CANCELED) {

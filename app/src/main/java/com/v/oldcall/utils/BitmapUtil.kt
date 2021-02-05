@@ -16,7 +16,7 @@ object BitmapUtil {
     private const val TAG = "bitmapUtil"
 
     fun getBitmapFromUri(context: Context, uri: Uri): Bitmap? {
-        Log.w(TAG, "uri=${uri.toString()}")
+        Log.d(TAG, "uri=${uri.toString()}")
         var inputStream = context.contentResolver.openInputStream(uri)
         val options = BitmapFactory.Options().also {
             it.inJustDecodeBounds = true
@@ -26,7 +26,7 @@ object BitmapUtil {
 
         val originalW = options.outWidth
         val originalH = options.outHeight
-        Log.w(TAG, "originalW=$originalW---originalH=$originalH")
+        Log.d(TAG, "originalW=$originalW---originalH=$originalH")
         if (originalH == -1 || originalW == -1) {
             return null
         }
@@ -49,13 +49,13 @@ object BitmapUtil {
         }
         inputStream = context.contentResolver.openInputStream(uri)
         val bitmap = BitmapFactory.decodeStream(inputStream, null, ratioOptions)
-        Log.w(TAG, "bitmap=$bitmap")
+        Log.d(TAG, "bitmap=$bitmap")
         inputStream!!.close()
         return compressBitmap(bitmap)
     }
 
     fun compressBitmap(srcBitmap: Bitmap?): Bitmap? {
-        Log.w(TAG, "srcBitmap=$srcBitmap")
+        Log.d(TAG, "srcBitmap=$srcBitmap")
         if (srcBitmap == null) return null
         val baos = ByteArrayOutputStream()
         srcBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)

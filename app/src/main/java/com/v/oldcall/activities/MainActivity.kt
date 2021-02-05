@@ -10,24 +10,27 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.v.oldcall.R
 import com.v.oldcall.adapters.FrequentContactsAdapter
+import com.v.oldcall.app.App
+import com.v.oldcall.constants.Keys
 import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.mvps.MainContract
 import com.v.oldcall.mvps.MainPresenter
 import com.v.oldcall.utils.AvatarLoader
 import com.v.oldcall.utils.CommonUtil
+import com.v.oldcall.utils.PinYinStringUtil
 import com.v.oldcall.utils.ToastManager
 import com.v.oldcall.views.DividerDecoration
 import com.v.oldcall.views.SlideItemHelperCallback
-import com.v.oldcall.views.SwipeRecyclerView
 
 
 class MainActivity : BaseMvpActivity<MainPresenter<MainContract.View>>(),
     MainContract.View, View.OnClickListener, FrequentContactsAdapter.HandleContactListener {
 
     private val TAG = "MainActivity"
+    private val REQUEST_CODE_EDIT: Int = 0x1
     private var rvContract: RecyclerView? = null
     private lateinit var adapter: FrequentContactsAdapter
-
+    private var modifyPosition = -1
 
     override fun getContentLayoutId(): Int {
         return R.layout.activity_main
@@ -62,19 +65,24 @@ class MainActivity : BaseMvpActivity<MainPresenter<MainContract.View>>(),
         }
     }
 
+    override fun initPresenter() {
+        mPresenter = MainPresenter()
+        mPresenter!!.attach(this)
+    }
+
     override fun initData() {
         goCheckPermission()
         mPresenter?.showFrequentContacts()
     }
 
-    override fun onResume() {
-        super.onResume()
-        mPresenter?.showFrequentContacts()
-    }
 
     override fun showNoContacts(msg: String) {
         adapter.setEmptyTextHint(msg)
         adapter.addNewList(emptyList())
+    }
+
+    override fun updateContacts(contactList: List<ContactEntity>) {
+        adapter.addNewList(contactList)
     }
 
     override fun onContactRemoved(removed: Boolean, position: Int) {
@@ -84,25 +92,28 @@ class MainActivity : BaseMvpActivity<MainPresenter<MainContract.View>>(),
         }
     }
 
-    override fun updateContacts(contactList: List<ContactEntity>) {
-        adapter.addNewList(contactList)
+    override fun onResume() {
+        super.onResume()
+        if (App.needRefreshFrequentContacts) {
+            mPresenter?.showFrequentContacts()
+            App.needRefreshFrequentContacts = false
+        }
     }
-
 
     override fun onError(msg: String) {
-        TODO("Not yet implemented")
+        //nothing to do
     }
 
-    override fun initPresenter() {
-        mPresenter = MainPresenter()
-        mPresenter!!.attach(this)
+    override fun onDestroy() {
+        super.onDestroy()
+        AvatarLoader.destroy()
     }
 
     override fun onClick(v: View?) {
         if (null == v || CommonUtil.isFastClick(v)) return
         when (v.id) {
             R.id.btn_to_dialler -> {
-                go2Dialler();
+                go2Dialler()
             }
             R.id.btn_add_contacts,
             R.id.lev_btn_empty -> {
@@ -111,30 +122,43 @@ class MainActivity : BaseMvpActivity<MainPresenter<MainContract.View>>(),
         }
     }
 
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && REQUEST_CODE_EDIT == requestCode) {
+            data?.let {
+                val change = it.getBooleanExtra(Keys.INTENT_EDIT_CHANGE, false)
+                if (change) {
+                    adapter.notifyItemChanged(modifyPosition)
+                }
+            }
+        }
+    }
+
+
     private fun go2AddContactsActivity() {
-        val intent = Intent(this, AddContactsActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, AddContactsActivity::class.java).also {
+            it.putExtra(Keys.INTENT_FREQUENT_COUNT, adapter.getRealItemCount())
+        })
     }
 
 
     private fun go2Dialler() {
-        val intent = Intent(Intent.ACTION_DIAL)
-        startActivity(intent)
+        startActivity(Intent(Intent.ACTION_DIAL))
     }
 
     private fun goCheckPermission() {
-        val intent = Intent(this, PermissionCheckActivity::class.java)
-        startActivity(intent)
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        AvatarLoader.destroy()
+        startActivity(Intent(this, PermissionCheckActivity::class.java))
     }
 
     override fun removeContact(contact: ContactEntity, position: Int) {
-        Log.w("vvv", "removeContact posi=$position id=${contact.id}")
         mPresenter?.removeContact(contact, position)
+    }
+
+    override fun modifyContact(contact: ContactEntity, position: Int) {
+        modifyPosition = position
+        startActivityForResult(Intent(this, EditContactActivity::class.java).also {
+            it.putExtra(Keys.INTENT_EDIT_CONTACT, contact)
+        }, REQUEST_CODE_EDIT)
     }
 }

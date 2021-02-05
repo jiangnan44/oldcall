@@ -1,7 +1,6 @@
 package com.v.oldcall.activities
 
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.EditText
@@ -13,18 +12,22 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.v.oldcall.R
-import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.adapters.ContactsAdapter
+import com.v.oldcall.app.App
+import com.v.oldcall.constants.Keys
+import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.mvps.ContactsContract
 import com.v.oldcall.mvps.ContactsPresenter
+import com.v.oldcall.utils.ToastManager
 import com.v.oldcall.views.AlphabetLayout
 import com.v.oldcall.views.DividerDecoration
-import com.v.oldcall.utils.ToastManager
 
 class AddContactsActivity : ContactsContract.View,
     BaseMvpActivity<ContactsPresenter<ContactsContract.View>>(),
     ContactsAdapter.OnContactAddListener {
 
+    private val maxFrequentCount = 10
+    private var mFrequentCount = 0
     private var mScrollState = -1
 
     private lateinit var etSearch: EditText
@@ -96,17 +99,14 @@ class AddContactsActivity : ContactsContract.View,
 
 
     private fun connectData() {
-        sortLayout.setOnLetterChooseListener(object : AlphabetLayout.OnLetterChooseListener {
-            override fun onLetterChoose(letter: String) {
-                for (i in 0 until adapter.getRealItemCount()) {
-                    if (adapter.getItem(i).alpha.equals(letter)) {
-                        rvContacts.scrollToPosition(i)
-                        break
-                    }
+        sortLayout.setOnLetterChooseListener {
+            for (i in 0 until adapter.getRealItemCount()) {
+                if (adapter.getItem(i).alpha.equals(it)) {
+                    rvContacts.scrollToPosition(i)
+                    break
                 }
             }
-
-        })
+        }
 
         rvContacts.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -131,6 +131,7 @@ class AddContactsActivity : ContactsContract.View,
 
     override fun initData() {
         mPresenter?.showContacts()
+        mFrequentCount = intent.getIntExtra(Keys.INTENT_FREQUENT_COUNT, 0)
     }
 
     private fun getAllContacts() {
@@ -159,6 +160,8 @@ class AddContactsActivity : ContactsContract.View,
         adapter.notifyItemChanged(position)
         if (success) {
             ToastManager.showShort(this, getString(R.string.add_contact_success))
+            mFrequentCount++
+            App.needRefreshFrequentContacts = true
         } else {
             ToastManager.showShort(this, getString(R.string.add_contact_failed))
         }
@@ -169,6 +172,8 @@ class AddContactsActivity : ContactsContract.View,
         adapter.notifyItemChanged(position)
         if (success) {
             ToastManager.showShort(this, getString(R.string.remove_contact_success))
+            mFrequentCount--
+            App.needRefreshFrequentContacts = true
         } else {
             ToastManager.showShort(this, getString(R.string.remove_contact_failed))
         }
@@ -176,6 +181,12 @@ class AddContactsActivity : ContactsContract.View,
 
 
     override fun addContact2Frequent(contact: ContactEntity, position: Int) {
+        if (mFrequentCount >= maxFrequentCount) {
+            ToastManager.showShort(this, getString(R.string.add_contact_over_max))
+            adapter.getItem(position).isFrequent = false
+            adapter.notifyItemChanged(position)
+            return
+        }
         mPresenter?.add2FrequentContacts(contact, position)
     }
 
@@ -185,7 +196,7 @@ class AddContactsActivity : ContactsContract.View,
 
 
     override fun onError(msg: String) {
-        TODO("Not yet implemented")
+        //nothing to do
     }
 
 

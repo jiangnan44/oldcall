@@ -35,13 +35,14 @@
     <string name="no_contacts_now">您还没有联系人哦~</string>
     <string name="add_contact_success">添加成功</string>
     <string name="add_contact_failed">添加失败</string>
+    <string name="add_contact_over_max">最多添加10个常用联系人！</string>
     <string name="remove_contact_failed">移除失败</string>
     <string name="remove_contact_success">移除成功</string>
 
 
     <string name="remove_contact">移除</string>
     <string name="contact_action_dial">拨号</string>
-    <string name="contact_action_modify_avatar">修改头像</string>
+    <string name="contact_action_modify_info">修改信息</string>
 
     <string name="call_err_contact">获取联系人信息出错，请退出应用后重试!</string>
     <string name="call_take_photo">拍 照</string>

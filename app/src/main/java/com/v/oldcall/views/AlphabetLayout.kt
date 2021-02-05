@@ -81,8 +81,13 @@ class AlphabetLayout : LinearLayout {
         letter?.let { mAlphabetView.updateCurrentWord(it) }
     }
 
-    public fun setOnLetterChooseListener(listener: OnLetterChooseListener) {
-        this.listener = listener
+    public fun setOnLetterChooseListener(action: (String) -> Unit) {
+        this.listener = object : OnLetterChooseListener {
+            override fun onLetterChoose(letter: String) {
+                action(letter)
+            }
+
+        }
     }
 
     public interface OnLetterChooseListener {

@@ -41,8 +41,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:text="江南的南"
-        android:textColor="@color/teal_7"
-        android:textSize="@dimen/txt_24"
+        android:textColor="@color/orange_7"
+        android:textSize="@dimen/txt_26"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ac_iv_avatar" />

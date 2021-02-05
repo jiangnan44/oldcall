@@ -29,9 +29,9 @@ class ContactEntity() : Parcelable {
     var name: String? = null
         set(value) {
             field = value
-            pinyin = pinyin ?: PinYinStringUtil.getPinYin(value)
-            alpha = alpha ?: PinYinStringUtil.getHanZiAlphaLetter(value)
-            jianpin = jianpin ?: PinYinStringUtil.getPinYinHeadChar(value)
+            pinyin = pinyin ?: PinYinStringUtil.getFullPinYin(value)
+            alpha = alpha ?: PinYinStringUtil.getPinYinFirstLetter(value)
+            jianpin = jianpin ?: PinYinStringUtil.getPinYinHeadLetter(value)
         }
 
     constructor(parcel: Parcel) : this() {

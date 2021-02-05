@@ -27,6 +27,12 @@ object AvatarLoader {
 
     private fun getAvatarFromCache(key: String) = lruCache?.get(key)
 
+    /**
+     * @param key phone or avatar
+     */
+    fun removeAvatarCache(key: String){
+        lruCache?.remove(key)
+    }
 
     fun loadAvatar(contact: ContactEntity, iv: ImageView?) {
         val avatar = getAvatarFromCache(contact.phone!!)
