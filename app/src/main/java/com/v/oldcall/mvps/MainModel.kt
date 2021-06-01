@@ -1,6 +1,5 @@
 package com.v.oldcall.mvps
 
-import android.util.Log
 import com.v.oldcall.entities.ContactEntity
 import com.v.oldcall.utils.ObjectBoxHelper
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +36,7 @@ class MainModel : MainContract.Model {
     }
 
     override fun destroy() {
-       //nothing todo
+        //nothing here
     }
 
 }

@@ -58,11 +58,11 @@ class ToastManager private constructor(context: Context) {
     companion object {
         private var mToastManager: ToastManager? = null
 
-        fun getInstance(context: Context): ToastManager? {
+        fun getInstance(context: Context): ToastManager {
             if (null == mToastManager) {
                 mToastManager = ToastManager(context.applicationContext)
             }
-            return mToastManager
+            return mToastManager!!
         }
 
         fun showLong(context: Context?, text: String?) {
